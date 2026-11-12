@@ -6,7 +6,7 @@ FastAPI Application Entry Point
 from fastapi import FastAPI
 from app.core.config import settings
 from app.middleware.cors import setup_cors
-
+from app.core.handleExp import AppException, handle_app_exception
 
 app = FastAPI(
     title=settings.APP_NAME,
@@ -18,6 +18,9 @@ app = FastAPI(
     docs_url="/docs",
     redoc_url="/redoc",
 )
+
+# Đăng ký xử lý ngoại lệ tùy chỉnh
+app.add_exception_handler(AppException, handle_app_exception)
 
 # Gắn CORS — toàn bộ logic nằm trong app/middleware/cors.py
 setup_cors(app)
