@@ -1,0 +1,631 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <title>Bản đồ Cảnh báo Kẹt xe & Ngập lụt TPHCM (OpenFreeMap)</title>
+    <meta
+      name="description"
+      content="Ứng dụng theo dõi tình trạng giao thông kẹt xe và các điểm ngập lụt tại TP. Hồ Chí Minh theo thời gian thực sử dụng OpenFreeMap, không cần API Key, hỗ trợ tìm lộ trình né ngập an toàn."
+    />
+
+    <!-- MapLibre GL JS & CSS for OpenFreeMap (Hoàn toàn miễn phí, KHÔNG CẦN API KEY) -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/maplibre-gl/4.7.1/maplibre-gl.css"
+      rel="stylesheet"
+      onerror="
+        this.onerror = null;
+        this.href = 'https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css';
+      "
+    />
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/maplibre-gl/4.7.1/maplibre-gl.js"
+      onerror="
+        this.onerror = null;
+        this.src = 'https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js';
+      "
+    ></script>
+
+    <link rel="stylesheet" href="css/style.css?v=2.5" />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌊</text></svg>"
+    />
+  </head>
+  <body>
+    <div class="app-container">
+      <!-- Top Application Header -->
+      <header class="app-header">
+        <div class="brand-wrapper">
+          <div class="brand-icon">🌊</div>
+          <div>
+            <h1 class="brand-title">Cảnh Báo Kẹt Xe & Ngập Lụt TPHCM</h1>
+          </div>
+        </div>
+        <div class="header-actions">
+          <button
+            id="sidebarToggleBtn"
+            class="btn btn-outline sidebar-toggle-btn"
+            aria-controls="sidebarPanel"
+            aria-expanded="false"
+            aria-label="Mở hoặc đóng danh sách điểm ngập và tìm đường"
+            title="Mở hoặc đóng danh sách điểm ngập và tìm đường"
+          >
+            <span class="sidebar-toggle-icon" aria-hidden="true">☰</span>
+            <span class="sidebar-toggle-label">☰ Menu & Tìm đường</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- Main Workspace: Map & Controls -->
+      <main class="main-content">
+        <!-- OpenFreeMap Map Container -->
+        <div id="map">
+          <!-- Fallback Loading Notice if Browser Cached Old Code -->
+          <div
+            id="mapLoadingNotice"
+            style="
+              position: absolute;
+              top: 50%;
+              left: 50%;
+              transform: translate(-50%, -50%);
+              text-align: center;
+              color: #64748b;
+              font-size: 14px;
+              z-index: 0;
+              pointer-events: none;
+            "
+          >
+            <div style="font-size: 32px; margin-bottom: 8px">🗺️</div>
+            <div style="font-weight: 600">Đang tải bản đồ OpenFreeMap...</div>
+            <div style="font-size: 12px; margin-top: 4px; color: #94a3b8">
+              (Nếu không hiện, hãy bấm <b>Ctrl + F5</b> để làm mới bộ nhớ đệm
+              trình duyệt)
+            </div>
+          </div>
+        </div>
+
+        <!-- Floating Top Controls -->
+        <div class="map-controls-top">
+          <!-- Traffic Layer Toggle Switch -->
+          <div class="traffic-toggle-card">
+            <span class="traffic-label"> <span>🚦</span> Lớp kẹt xe: </span>
+            <label class="switch">
+              <input
+                type="checkbox"
+                id="trafficToggleSwitch"
+                aria-describedby="trafficStatus"
+                disabled
+              />
+              <span class="slider"></span>
+            </label>
+            <span id="trafficStatus" class="traffic-status" role="status">
+              Cần cấu hình TomTom API key
+            </span>
+          </div>
+
+          <!-- Map Style Selector (Liberty, Bright, Positron) -->
+          <div class="map-style-card">
+            <span>🗺️</span>
+            <select id="mapStyleSelect" class="map-style-select">
+              <option value="liberty">Liberty (Màu sắc)</option>
+              <option value="bright">Bright (Sáng nét)</option>
+              <option value="positron">Positron (Xám dịu)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Floating Legend on bottom-left -->
+        <div class="flood-legend">
+          <div class="legend-title">Mức độ ngập nước</div>
+          <div class="legend-item">
+            <span class="legend-dot low"></span>
+            <span>Mắt cá chân (&lt; 20cm)</span>
+          </div>
+          <div class="legend-item">
+            <span class="legend-dot medium"></span>
+            <span>Nửa bánh xe (20 - 40cm)</span>
+          </div>
+          <div class="legend-item">
+            <span class="legend-dot high"></span>
+            <span>Lút bánh xe (&gt; 40cm)</span>
+          </div>
+        </div>
+        <div id="trafficLegend" class="traffic-legend" hidden>
+          <div class="legend-title">Tình trạng giao thông</div>
+          <div class="legend-item">
+            <span class="traffic-line traffic-slow"></span>
+            <span>Ùn tắc</span>
+          </div>
+          <div class="legend-item">
+            <span class="traffic-line traffic-moderate"></span>
+            <span>Di chuyển chậm</span>
+          </div>
+          <div class="legend-item">
+            <span class="traffic-line traffic-free"></span>
+            <span>Thông thoáng</span>
+          </div>
+        </div>
+
+        <!-- Floating Action Buttons on bottom-right (FABs) -->
+        <div class="map-fabs">
+          <button
+            id="recenterFab"
+            class="fab"
+            title="Định vị vị trí GPS hiện tại của tôi"
+          >
+            <div class="user-dot"></div>
+          </button>
+          <button
+            id="reportFloodFab"
+            class="fab fab-danger"
+            title="Báo cáo điểm ngập mới"
+          >
+            ➕
+          </button>
+        </div>
+
+        <!-- Sliding Sidebar / Bottom Sheet -->
+        <aside id="sidebarPanel" class="sidebar-panel">
+          <div class="panel-header">
+            <div class="panel-title"><span>📍</span> Điều Hướng & Cảnh Báo</div>
+            <!-- <button
+              id="sidebarCloseBtn"
+              class="panel-close-btn"
+              title="Đóng panel"
+            >
+              ✕
+            </button> -->
+          </div>
+
+          <!-- Tabs: Danh sách ngập / Tìm đường né ngập -->
+          <div
+            style="
+              display: grid;
+              grid-template-columns: 1fr 1fr;
+              gap: 8px;
+              padding: 12px 16px 0;
+            "
+          >
+            <button
+              id="tabFloodListBtn"
+              class="btn btn-primary"
+              style="font-size: 13px; padding: 8px"
+            >
+              🌊 Điểm ngập (<span id="floodTotalBadge">0</span>)
+            </button>
+            <button
+              id="tabRouteBtn"
+              class="btn btn-outline"
+              style="font-size: 13px; padding: 8px"
+            >
+              🚗 Tìm đường né ngập
+            </button>
+          </div>
+
+          <div class="panel-body">
+            <!-- Section 1: Danh sách các điểm ngập -->
+            <div id="sectionFloodList">
+              <!-- Filter Pills -->
+              <div
+                style="
+                  display: flex;
+                  gap: 6px;
+                  overflow-x: auto;
+                  padding-bottom: 12px;
+                "
+              >
+                <button
+                  class="filter-pill active btn btn-outline"
+                  data-filter="all"
+                  style="
+                    padding: 4px 10px;
+                    font-size: 12px;
+                    border-radius: 20px;
+                  "
+                >
+                  Tất cả
+                </button>
+                <button
+                  class="filter-pill btn btn-outline"
+                  data-filter="high"
+                  style="
+                    padding: 4px 10px;
+                    font-size: 12px;
+                    border-radius: 20px;
+                    color: #ef4444;
+                  "
+                >
+                  Lút bánh xe
+                </button>
+                <button
+                  class="filter-pill btn btn-outline"
+                  data-filter="medium"
+                  style="
+                    padding: 4px 10px;
+                    font-size: 12px;
+                    border-radius: 20px;
+                    color: #f59e0b;
+                  "
+                >
+                  Nửa bánh xe
+                </button>
+                <button
+                  class="filter-pill btn btn-outline"
+                  data-filter="low"
+                  style="
+                    padding: 4px 10px;
+                    font-size: 12px;
+                    border-radius: 20px;
+                    color: #10b981;
+                  "
+                >
+                  Mắt cá
+                </button>
+              </div>
+
+              <!-- Cards Container -->
+              <div id="floodListContainer"></div>
+            </div>
+
+            <!-- Section 2: Tìm đường & Quét giao cắt điểm ngập (SRS FR4) -->
+            <div id="sectionRoute" style="display: none">
+              <div class="route-card">
+                <!-- Điểm đi A -->
+                <div class="input-group">
+                  <span class="input-icon">🟢</span>
+                  <input
+                    type="text"
+                    id="originInput"
+                    class="form-control"
+                    placeholder="Nhập điểm đi (A) hoặc chọn vị trí"
+                    autocomplete="off"
+                  />
+                  <div id="originDropdown" class="autocomplete-dropdown"></div>
+                </div>
+                <div
+                  style="
+                    margin-bottom: 10px;
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                  "
+                >
+                  <a
+                    href="javascript:void(0)"
+                    onclick="window.RouteManager.useCurrentLocationAsOrigin()"
+                    style="
+                      font-size: 12px;
+                      color: var(--primary);
+                      text-decoration: none;
+                      font-weight: 600;
+                    "
+                  >
+                    🎯 Vị trí GPS của tôi
+                  </a>
+                  <a
+                    href="javascript:void(0)"
+                    onclick="window.RouteManager.startPickOnMap('origin')"
+                    style="
+                      font-size: 12px;
+                      color: #475569;
+                      text-decoration: none;
+                      font-weight: 500;
+                    "
+                  >
+                    📍 Chọn trên bản đồ
+                  </a>
+                </div>
+
+                <!-- Điểm đến B -->
+                <div class="input-group">
+                  <span class="input-icon">🔴</span>
+                  <input
+                    type="text"
+                    id="destinationInput"
+                    class="form-control"
+                    placeholder="Nhập điểm đến (B) tại TPHCM"
+                    autocomplete="off"
+                  />
+                  <div id="destDropdown" class="autocomplete-dropdown"></div>
+                </div>
+                <div style="margin-bottom: 12px; text-align: right">
+                  <a
+                    href="javascript:void(0)"
+                    onclick="window.RouteManager.startPickOnMap('dest')"
+                    style="
+                      font-size: 12px;
+                      color: #475569;
+                      text-decoration: none;
+                      font-weight: 500;
+                    "
+                  >
+                    📍 Chọn điểm đến trên bản đồ
+                  </a>
+                </div>
+
+                <div style="display: flex; gap: 8px">
+                  <button
+                    class="btn btn-primary"
+                    onclick="window.RouteManager.calculateRoute(false)"
+                  >
+                    🔍 Tìm đường & Quét ngập
+                  </button>
+                  <button
+                    class="btn btn-outline"
+                    onclick="window.RouteManager.clearRoute()"
+                    style="width: auto"
+                  >
+                    Xóa
+                  </button>
+                </div>
+              </div>
+
+              <!-- Banner Cảnh báo ngập màu đỏ (Task 41) -->
+              <div id="routeWarningBanner" class="route-warning-banner">
+                <div class="warning-header">
+                  <span>⚠️</span> CẢNH BÁO PHÁT HIỆN ĐIỂM NGẬP
+                </div>
+                <div id="routeWarningDesc" class="warning-desc"></div>
+                <div id="interceptedFloodsList"></div>
+                <div
+                  id="routeWarningAction"
+                  class="warning-action"
+                  style="margin-top: 8px"
+                ></div>
+                <button
+                  id="avoidRouteBtn"
+                  class="btn avoid-route-btn"
+                  onclick="window.RouteManager.calculateRoute(true)"
+                >
+                  🔄 Chuyển sang lộ trình né ngập
+                </button>
+              </div>
+
+              <!-- Banner Lộ trình an toàn màu xanh (Task 41) -->
+              <div id="routeSafeBanner" class="route-safe-banner"></div>
+            </div>
+          </div>
+        </aside>
+      </main>
+    </div>
+
+    <!-- Modal Báo Cáo Điểm Ngập (Crowdsourcing - SRS FR3.2 / Task 31) -->
+    <div id="reportModal" class="modal-overlay">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="modal-title">🌊 Báo Cáo Điểm Ngập Lụt</h3>
+          <button
+            type="button"
+            class="panel-close-btn"
+            onclick="window.ReportManager.closeModal()"
+          >
+            ✕
+          </button>
+        </div>
+        <form id="reportFloodForm">
+          <div class="modal-body">
+            <!-- Tọa độ vị trí -->
+            <div style="margin-bottom: 12px">
+              <label
+                style="
+                  font-size: 12px;
+                  font-weight: 700;
+                  color: #475569;
+                  display: block;
+                  margin-bottom: 6px;
+                "
+              >
+                VỊ TRÍ ĐIỂM NGẬP (*)
+              </label>
+              <input
+                type="text"
+                id="reportCoordsDisplay"
+                class="form-control"
+                readonly
+                placeholder="Chưa chọn tọa độ"
+                style="
+                  background: #f8fafc;
+                  font-family: monospace;
+                  font-size: 13px;
+                  margin-bottom: 8px;
+                "
+              />
+              <div style="display: flex; gap: 8px">
+                <button
+                  type="button"
+                  class="btn btn-outline"
+                  style="font-size: 12px; padding: 6px"
+                  onclick="window.ReportManager.useCurrentLocation()"
+                >
+                  🎯 Dùng vị trí GPS hiện tại
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-outline"
+                  style="font-size: 12px; padding: 6px"
+                  onclick="window.ReportManager.startPickOnMap()"
+                >
+                  📍 Chọn trên bản đồ
+                </button>
+              </div>
+            </div>
+
+            <!-- Mức độ ngập: 3 Cấp độ chuẩn SRS -->
+            <div style="margin-bottom: 12px">
+              <label
+                style="
+                  font-size: 12px;
+                  font-weight: 700;
+                  color: #475569;
+                  display: block;
+                "
+              >
+                MỨC ĐỘ NƯỚC NGẬP (*)
+              </label>
+              <div class="severity-options">
+                <div class="severity-btn selected" data-level="low">
+                  <span class="sev-icon">💧</span>
+                  <span class="sev-text"
+                    >Mắt cá chân<br /><small style="color: #64748b"
+                      >(&lt; 20cm)</small
+                    ></span
+                  >
+                </div>
+                <div class="severity-btn" data-level="medium">
+                  <span class="sev-icon">⚠️</span>
+                  <span class="sev-text"
+                    >Nửa bánh xe<br /><small style="color: #64748b"
+                      >(20-40cm)</small
+                    ></span
+                  >
+                </div>
+                <div class="severity-btn" data-level="high">
+                  <span class="sev-icon">⛔</span>
+                  <span class="sev-text"
+                    >Lút bánh xe<br /><small style="color: #64748b"
+                      >(&gt; 40cm)</small
+                    ></span
+                  >
+                </div>
+              </div>
+            </div>
+
+            <!-- Tiêu đề / Tên đường -->
+            <div style="margin-bottom: 12px">
+              <label
+                for="reportTitle"
+                style="
+                  font-size: 12px;
+                  font-weight: 700;
+                  color: #475569;
+                  display: block;
+                  margin-bottom: 4px;
+                "
+              >
+                TÊN ĐOẠN ĐƯỜNG / KHU VỰC (*)
+              </label>
+              <input
+                type="text"
+                id="reportTitle"
+                class="form-control"
+                placeholder="Ví dụ: Chân cầu vượt Nguyễn Hữu Cảnh"
+                required
+              />
+            </div>
+
+            <!-- Độ sâu ước tính (cm) & Bán kính (m) -->
+            <div
+              style="
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 10px;
+                margin-bottom: 12px;
+              "
+            >
+              <div>
+                <label
+                  for="reportDepth"
+                  style="
+                    font-size: 12px;
+                    font-weight: 700;
+                    color: #475569;
+                    display: block;
+                    margin-bottom: 4px;
+                  "
+                >
+                  Độ sâu ước lượng (cm)
+                </label>
+                <input
+                  type="number"
+                  id="reportDepth"
+                  class="form-control"
+                  placeholder="Ví dụ: 30"
+                  min="5"
+                  max="200"
+                />
+              </div>
+              <div>
+                <label
+                  for="reportRadius"
+                  style="
+                    font-size: 12px;
+                    font-weight: 700;
+                    color: #475569;
+                    display: block;
+                    margin-bottom: 4px;
+                  "
+                >
+                  Bán kính vùng ngập (m)
+                </label>
+                <input
+                  type="number"
+                  id="reportRadius"
+                  class="form-control"
+                  value="50"
+                  min="10"
+                  max="500"
+                />
+              </div>
+            </div>
+
+            <!-- Mô tả thêm -->
+            <div style="margin-bottom: 12px">
+              <label
+                for="reportDesc"
+                style="
+                  font-size: 12px;
+                  font-weight: 700;
+                  color: #475569;
+                  display: block;
+                  margin-bottom: 4px;
+                "
+              >
+                Mô tả chi tiết tình trạng
+              </label>
+              <textarea
+                id="reportDesc"
+                class="form-control"
+                rows="2"
+                placeholder="Ví dụ: Nước dâng nhanh, xe máy chết máy nhiều..."
+              ></textarea>
+            </div>
+          </div>
+
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-outline"
+              onclick="window.ReportManager.closeModal()"
+            >
+              Hủy
+            </button>
+            <button type="submit" class="btn btn-primary">
+              Gửi Báo Cáo Ngập
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Toast Notification Container -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <!-- Fullscreen Loading Spinner Overlay -->
+    <div id="spinnerOverlay" class="spinner-overlay">
+      <div class="spinner"></div>
+      <div id="spinnerText" class="spinner-text">Đang tải...</div>
+    </div>
+
+    <!-- Application JavaScript Modules với Cache-busting -->
+    <script src="js/config.js?v=2.5"></script>
+    <script src="js/map.js?v=2.5"></script>
+    <script src="js/floods.js?v=2.5"></script>
+    <script src="js/report.js?v=2.5"></script>
+    <script src="js/routing.js?v=2.5"></script>
+    <script src="js/app.js?v=2.5"></script>
+  </body>
+</html>
