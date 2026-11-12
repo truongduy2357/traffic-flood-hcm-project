@@ -29,6 +29,11 @@ class NotFoundError(AppException):
     message = "Không tìm thấy dữ liệu"
 
 
+class TooManyRequestsError(AppException):
+    status_code = 429
+    message = "Bạn gửi yêu cầu quá nhanh! Vui lòng thử lại sau ít phút."
+
+
 # 3. Hàm bắt lỗi và trả về JSON chuẩn cho Frontend
 async def handle_app_exception(request: Request, exc: AppException):
     return JSONResponse(

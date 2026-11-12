@@ -1,21 +1,22 @@
 from typing import Any
 from pydantic import BaseModel, Field, model_validator
+from app.core.config import settings
 
 
-# 1. Tọa độ điểm đơn lẻ (WGS 84 - SRID 4326)
+# 1. Tọa độ điểm đơn lẻ (Giới hạn theo phạm vi TP.HCM: 10.37-11.16, 106.35-106.93)
 class PointCoordinate(BaseModel):
     latitude: float = Field(
         ...,
-        ge=-90.0,
-        le=90.0,
-        description="Vĩ độ GPS theo chuẩn WGS 84 (TPHCM: 10.37 - 11.16)",
+        ge=settings.TPHCM_MIN_LAT,
+        le=settings.TPHCM_MAX_LAT,
+        description=f"Vĩ độ GPS nằm trong phạm vi TP.HCM ({settings.TPHCM_MIN_LAT} - {settings.TPHCM_MAX_LAT})",
         examples=[10.776889],
     )
     longitude: float = Field(
         ...,
-        ge=-180.0,
-        le=180.0,
-        description="Kinh độ GPS theo chuẩn WGS 84 (TPHCM: 106.35 - 106.93)",
+        ge=settings.TPHCM_MIN_LNG,
+        le=settings.TPHCM_MAX_LNG,
+        description=f"Kinh độ GPS nằm trong phạm vi TP.HCM ({settings.TPHCM_MIN_LNG} - {settings.TPHCM_MAX_LNG})",
         examples=[106.700806],
     )
 

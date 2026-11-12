@@ -128,6 +128,17 @@ class ReportManager {
             return;
         }
 
+        // Kiểm tra tọa độ có nằm trong giới hạn viewport TP.HCM (Vĩ độ: 10.37-11.16, Kinh độ: 106.35-106.93)
+        const bounds = window.APP_CONFIG.HCM_MAX_BOUNDS; // [[106.35, 10.37], [106.93, 11.16]]
+        const isInsideHCM = (
+            this.selectedLng >= bounds[0][0] && this.selectedLng <= bounds[1][0] &&
+            this.selectedLat >= bounds[0][1] && this.selectedLat <= bounds[1][1]
+        );
+        if (!isInsideHCM) {
+            window.App.showToast("Tọa độ nằm ngoài phạm vi TP. Hồ Chí Minh (Vĩ độ: 10.37-11.16, Kinh độ: 106.35-106.93).", "error");
+            return;
+        }
+
         const payload = {
             title: title,
             description: description || null,

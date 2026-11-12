@@ -125,3 +125,15 @@ except ImportError:
 
 settings = Settings()
 
+
+def is_in_hcm(lat: float, lng: float) -> bool:
+    """
+    Kiểm tra tọa độ GPS có nằm trong giới hạn viewport TP.HCM hay không:
+    - Vĩ độ (Latitude): 10.37 đến 11.16
+    - Kinh độ (Longitude): 106.35 đến 106.93
+    """
+    return (
+        settings.TPHCM_MIN_LAT <= lat <= settings.TPHCM_MAX_LAT
+        and settings.TPHCM_MIN_LNG <= lng <= settings.TPHCM_MAX_LNG
+    )
+
