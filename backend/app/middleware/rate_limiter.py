@@ -1,11 +1,5 @@
 """
-╔══════════════════════════════════════════════════════════════════════════════╗
-║  RATE LIMITING MIDDLEWARE & DEPENDENCY — Task Chống Spam Request            ║
-║  Đồ án sinh viên: Thiết kế đơn giản, dễ hiểu, lưu trữ trong RAM (In-Memory)  ║
-║  Không cần cài đặt Redis hay cấu hình phức tạp.                              ║
-╚══════════════════════════════════════════════════════════════════════════════╝
 
-Nguyên lý hoạt động (Cơ chế Sliding Window):
 1. Mỗi khi người dùng gửi request, server lấy IP của client.
 2. Lưu các mốc thời gian (timestamp) mà IP đó đã gọi API vào một danh sách.
 3. Khi có request mới:
