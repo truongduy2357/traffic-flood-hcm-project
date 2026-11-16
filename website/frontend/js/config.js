@@ -12,6 +12,10 @@ window.APP_CONFIG = {
         positron: "https://tiles.openfreemap.org/styles/positron",
     },
     DEFAULT_STYLE: "https://tiles.openfreemap.org/styles/liberty",
+    // TomTom Traffic Flow Tiles API Key
+    // Đăng ký miễn phí tại: https://developer.tomtom.com/
+    // Sau khi có key, thay thế chuỗi bên dưới và đặt TRAFFIC_AVAILABLE = true
+    TOMTOM_API_KEY: "",
     TRAFFIC_AVAILABLE: false,
 
     // Đường dẫn Base URL tới Backend FastAPI

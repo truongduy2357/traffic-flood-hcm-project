@@ -83,64 +83,144 @@ class MapManager {
         }
     }
 
-    /** Khởi tạo lớp tile giao thông trực tiếp TomTom. */
+    /**
+     * =========================================================================
+     * KHỞI TẠO ĐỐI TƯỢNG TRAFFIC LAYER (Task 25 — SRS FR2.1)
+     * =========================================================================
+     * Khởi tạo lớp bản đồ giao thông thời gian thực sử dụng TomTom Traffic
+     * Flow Tiles API — tương đương TrafficLayer của Google Maps API.
+     *
+     * Kỹ thuật:
+     * - Tạo raster tile source từ TomTom Traffic Flow API v1
+     * - URL pattern: https://api.tomtom.com/traffic/map/4/tile/flow/relative0/{z}/{x}/{y}.png
+     * - Tile 256x256px, zoom 0-22, tải dữ liệu mật độ giao thông thời gian thực
+     * - Layer được chèn BÊN DƯỚI các layer symbol (text/label) để không che chữ
+     * - Mặc định visibility: "none" → chỉ hiện khi người dùng bật Toggle Switch
+     *
+     * Màu sắc trên tile:
+     *   🟢 Xanh lá  = Thông thoáng (free flow)
+     *   🟡 Vàng/Cam = Di chuyển chậm (moderate)
+     *   🔴 Đỏ       = Ùn tắc nặng (heavy congestion)
+     */
     initTrafficLayer() {
         if (!this.map) return;
 
+        const config = window.APP_CONFIG;
+        const apiKey = config.TOMTOM_API_KEY || "";
+
+        // Xác định URL tile: nếu có API key → gọi trực tiếp TomTom, ngược lại → qua backend proxy
+        let tileUrl;
+        if (apiKey) {
+            // Gọi trực tiếp TomTom Traffic Flow Tiles API (không cần backend proxy)
+            tileUrl = `https://api.tomtom.com/traffic/map/4/tile/flow/relative0/{z}/{x}/{y}.png?key=${apiKey}&tileSize=256`;
+        } else {
+            // Fallback: gọi qua backend proxy (nếu backend đã cấu hình TOMTOM_API_KEY)
+            tileUrl = `${config.API_BASE_URL}/api/v1/traffic/flow/{z}/{x}/{y}.png`;
+        }
+
+        // Chỉ tạo source + layer 1 lần duy nhất (tránh duplicate khi đổi style)
         if (!this.map.getSource("traffic-flow-source")) {
+            // Tạo Raster Tile Source — tương đương google.maps.TrafficLayer
             this.map.addSource("traffic-flow-source", {
                 type: "raster",
-                tiles: [
-                    `${window.APP_CONFIG.API_BASE_URL}/api/v1/traffic/flow/{z}/{x}/{y}.png`,
-                ],
+                tiles: [tileUrl],
                 tileSize: 256,
                 minzoom: 0,
                 maxzoom: 22,
-                attribution: "© TomTom",
+                attribution: "© TomTom Traffic Flow",
             });
 
+            // Tìm layer symbol đầu tiên để chèn traffic layer bên dưới (không che text)
             const firstSymbolLayer = this.map
                 .getStyle()
                 .layers.find((layer) => layer.type === "symbol")?.id;
-            this.map.addLayer({
-                id: "traffic-flow-layer",
-                type: "raster",
-                source: "traffic-flow-source",
-                layout: {
-                    visibility: "none",
+
+            // Tạo Raster Layer hiển thị tile giao thông
+            this.map.addLayer(
+                {
+                    id: "traffic-flow-layer",
+                    type: "raster",
+                    source: "traffic-flow-source",
+                    layout: {
+                        visibility: "none", // Mặc định ẨN — bật qua Toggle Switch
+                    },
+                    paint: {
+                        "raster-opacity": 0.85, // Độ trong suốt 85% để vẫn thấy bản đồ nền
+                    },
                 },
-                paint: {
-                    "raster-opacity": 0.9,
-                },
-            }, firstSymbolLayer);
+                firstSymbolLayer
+            );
         }
+
+        // Cập nhật trạng thái nút Toggle Switch trên giao diện
+        const trafficSwitch = document.getElementById("trafficToggleSwitch");
+        const trafficStatus = document.getElementById("trafficStatus");
+
+        if (apiKey || config.TRAFFIC_AVAILABLE) {
+            // Có API key → mở khóa Toggle Switch
+            if (trafficSwitch) trafficSwitch.disabled = false;
+            if (trafficStatus) trafficStatus.textContent = "Sẵn sàng";
+            config.TRAFFIC_AVAILABLE = true;
+        } else {
+            // Chưa có API key → giữ disabled
+            if (trafficSwitch) trafficSwitch.disabled = true;
+            if (trafficStatus) trafficStatus.textContent = "Cần cấu hình TomTom API key";
+        }
+
+        console.log(
+            "🚦 TrafficLayer đã khởi tạo.",
+            apiKey ? "(Direct TomTom API)" : "(Backend Proxy)"
+        );
     }
 
+    /**
+     * =========================================================================
+     * TOGGLE SWITCH — ẨN / HIỆN LỚP GIAO THÔNG (Task 25 — SRS FR2.1)
+     * =========================================================================
+     * Được gọi khi người dùng bật/tắt nút công tắc Toggle Switch trên giao diện.
+     *
+     * @param {boolean|undefined} enable - true: bật, false: tắt, undefined: đảo trạng thái
+     * @returns {boolean|false} Trạng thái sau khi toggle, hoặc false nếu chưa sẵn sàng
+     */
     toggleTraffic(enable) {
-        if (!this.map || !this.map.getLayer("traffic-flow-layer")) return;
+        if (!this.map || !this.map.getLayer("traffic-flow-layer")) return false;
+
+        // Chặn bật nếu chưa có API key
         if (enable && !window.APP_CONFIG.TRAFFIC_AVAILABLE) {
             const trafficSwitch = document.getElementById("trafficToggleSwitch");
             if (trafficSwitch) trafficSwitch.checked = false;
-            window.App.showToast("Cần cấu hình TOMTOM_API_KEY để bật giao thông.", "warning");
+            window.App.showToast(
+                "Cần cấu hình TOMTOM_API_KEY trong config.js để bật lớp giao thông.",
+                "warning"
+            );
             return false;
         }
+
+        // Xác định trạng thái mới
         this.isTrafficEnabled = (enable !== undefined) ? enable : !this.isTrafficEnabled;
         this.trafficErrorNotified = false;
 
+        // Bật/tắt visibility của traffic layer trên bản đồ
         const visibility = this.isTrafficEnabled ? "visible" : "none";
         this.map.setLayoutProperty("traffic-flow-layer", "visibility", visibility);
+
+        // Bật/tắt bảng chú giải giao thông (Traffic Legend)
         const trafficLegend = document.getElementById("trafficLegend");
         if (trafficLegend) trafficLegend.hidden = !this.isTrafficEnabled;
+
+        // Toggle CSS class để điều chỉnh layout (dời flood legend lên khi traffic legend hiện)
         const mainContent = document.querySelector(".main-content");
         if (mainContent) {
             mainContent.classList.toggle("traffic-enabled", this.isTrafficEnabled);
         }
 
+        // Thông báo trạng thái cho người dùng qua Toast
         if (this.isTrafficEnabled) {
-            window.App.showToast("Đã bật lớp giao thông trực tiếp TomTom.", "success");
+            window.App.showToast("🚦 Đã bật lớp giao thông thời gian thực.", "success");
         } else {
-            window.App.showToast("Đã tắt lớp giao thông", "warning");
+            window.App.showToast("Đã tắt lớp giao thông.", "warning");
         }
+
         return this.isTrafficEnabled;
     }
 

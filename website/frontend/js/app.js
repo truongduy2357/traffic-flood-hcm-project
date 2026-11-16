@@ -32,16 +32,31 @@ class Application {
       if (data.openfreemap_style_url) {
         this.config.DEFAULT_STYLE = data.openfreemap_style_url;
       }
-      this.config.TRAFFIC_AVAILABLE = data.traffic_available === true;
-
-      const trafficSwitch = document.getElementById("trafficToggleSwitch");
-      const trafficStatus = document.getElementById("trafficStatus");
-      if (trafficSwitch) trafficSwitch.disabled = !this.config.TRAFFIC_AVAILABLE;
-      if (trafficStatus) trafficStatus.hidden = this.config.TRAFFIC_AVAILABLE;
+      // Cập nhật TRAFFIC_AVAILABLE từ backend hoặc từ config local (có TOMTOM_API_KEY)
+      if (data.traffic_available === true || this.config.TOMTOM_API_KEY) {
+        this.config.TRAFFIC_AVAILABLE = true;
+      }
+      if (data.tomtom_api_key && !this.config.TOMTOM_API_KEY) {
+        this.config.TOMTOM_API_KEY = data.tomtom_api_key;
+        this.config.TRAFFIC_AVAILABLE = true;
+      }
     } catch (e) {
       console.warn("Dùng cấu hình OpenFreeMap mặc định:", e);
-      const trafficStatus = document.getElementById("trafficStatus");
-      if (trafficStatus) trafficStatus.textContent = "Không kết nối backend";
+      // Nếu có TOMTOM_API_KEY trong config.js → vẫn cho phép bật traffic
+      if (this.config.TOMTOM_API_KEY) {
+        this.config.TRAFFIC_AVAILABLE = true;
+      }
+    }
+
+    // Cập nhật trạng thái UI của toggle switch dựa trên TRAFFIC_AVAILABLE
+    const trafficSwitch = document.getElementById("trafficToggleSwitch");
+    const trafficStatus = document.getElementById("trafficStatus");
+    if (this.config.TRAFFIC_AVAILABLE) {
+      if (trafficSwitch) trafficSwitch.disabled = false;
+      if (trafficStatus) trafficStatus.textContent = "Sẵn sàng";
+    } else {
+      if (trafficSwitch) trafficSwitch.disabled = true;
+      if (trafficStatus) trafficStatus.textContent = "Cần cấu hình TomTom API key";
     }
   }
 
