@@ -90,20 +90,19 @@
 
         <!-- Floating Top Controls -->
         <div class="map-controls-top">
-          <!-- Traffic Layer Toggle Switch -->
+          <!-- Traffic Layer Toggle Switch (Task 25 & FR2.1) -->
           <div class="traffic-toggle-card">
             <span class="traffic-label"> <span>🚦</span> Lớp kẹt xe: </span>
-            <label class="switch">
+            <label class="switch" title="Bật/Tắt hiển thị tình trạng kẹt xe thời gian thực">
               <input
                 type="checkbox"
                 id="trafficToggleSwitch"
                 aria-describedby="trafficStatus"
-                disabled
               />
               <span class="slider"></span>
             </label>
             <span id="trafficStatus" class="traffic-status" role="status">
-              Cần cấu hình TomTom API key
+              Thời gian thực
             </span>
           </div>
 

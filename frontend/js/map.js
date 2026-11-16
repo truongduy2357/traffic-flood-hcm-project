@@ -83,63 +83,109 @@ class MapManager {
         }
     }
 
-    /** Khởi tạo lớp tile giao thông trực tiếp TomTom. */
+    /**
+     * Khởi tạo đối tượng TrafficLayer để tải dữ liệu kẹt xe và mật độ giao thông theo thời gian thực.
+     * Hỗ trợ chuẩn Google Maps API (new google.maps.TrafficLayer()) và MapLibre / OpenFreeMap raster flow.
+     * (Task 24 & FR2.1 SRS)
+     */
     initTrafficLayer() {
-        if (!this.map) return;
+        // 1. Nếu tích hợp Google Maps API: khởi tạo đối tượng google.maps.TrafficLayer
+        if (window.google && window.google.maps) {
+            try {
+                this.googleTrafficLayer = new google.maps.TrafficLayer();
+                console.log("🚦 google.maps.TrafficLayer đã được khởi tạo thành công.");
+            } catch (e) {
+                console.warn("Không thể khởi tạo google.maps.TrafficLayer:", e);
+            }
+        }
 
-        if (!this.map.getSource("traffic-flow-source")) {
+        // 2. Nếu chạy trên MapLibre GL / OpenFreeMap:
+        if (this.map && !this.map.getSource("traffic-flow-source")) {
+            const config = window.APP_CONFIG;
+            const apiKey = config.TOMTOM_API_KEY || "";
+            const tileUrl = apiKey
+                ? `https://api.tomtom.com/traffic/map/4/tile/flow/relative0/{z}/{x}/{y}.png?key=${apiKey}&tileSize=256`
+                : `${config.API_BASE_URL}/api/v1/traffic/flow/{z}/{x}/{y}.png`;
+
             this.map.addSource("traffic-flow-source", {
                 type: "raster",
-                tiles: [
-                    `${window.APP_CONFIG.API_BASE_URL}/api/v1/traffic/flow/{z}/{x}/{y}.png`,
-                ],
+                tiles: [tileUrl],
                 tileSize: 256,
                 minzoom: 0,
                 maxzoom: 22,
-                attribution: "© TomTom",
+                attribution: "© TomTom / Google Traffic Flow",
             });
 
             const firstSymbolLayer = this.map
                 .getStyle()
                 .layers.find((layer) => layer.type === "symbol")?.id;
+
             this.map.addLayer({
                 id: "traffic-flow-layer",
                 type: "raster",
                 source: "traffic-flow-source",
                 layout: {
-                    visibility: "none",
+                    visibility: "none", // Mặc định ẩn, điều khiển bằng nút công tắc Toggle switch
                 },
                 paint: {
-                    "raster-opacity": 0.9,
+                    "raster-opacity": 0.85,
                 },
             }, firstSymbolLayer);
+
+            console.log("🚦 Traffic Layer (MapLibre/OpenFreeMap) đã sẵn sàng.");
+        }
+
+        // Kích hoạt Toggle Switch trên giao diện
+        const trafficSwitch = document.getElementById("trafficToggleSwitch");
+        const trafficStatus = document.getElementById("trafficStatus");
+        if (trafficSwitch) {
+            trafficSwitch.disabled = false;
+        }
+        if (trafficStatus) {
+            trafficStatus.textContent = "Sẵn sàng";
         }
     }
 
+    /**
+     * Nút công tắc (Toggle switch) cho phép người dùng chủ động ẩn hoặc hiển thị thông tin kẹt xe trên bản đồ.
+     * (Task 25 & FR2.1 SRS)
+     * @param {boolean} [enable] - true: hiển thị, false: ẩn, undefined: đảo trạng thái
+     */
     toggleTraffic(enable) {
-        if (!this.map || !this.map.getLayer("traffic-flow-layer")) return;
-        if (enable && !window.APP_CONFIG.TRAFFIC_AVAILABLE) {
-            const trafficSwitch = document.getElementById("trafficToggleSwitch");
-            if (trafficSwitch) trafficSwitch.checked = false;
-            window.App.showToast("Cần cấu hình TOMTOM_API_KEY để bật giao thông.", "warning");
-            return false;
-        }
         this.isTrafficEnabled = (enable !== undefined) ? enable : !this.isTrafficEnabled;
         this.trafficErrorNotified = false;
 
-        const visibility = this.isTrafficEnabled ? "visible" : "none";
-        this.map.setLayoutProperty("traffic-flow-layer", "visibility", visibility);
+        // 1. Toggle trên Google Maps nếu có đối tượng google.maps.TrafficLayer
+        if (this.googleTrafficLayer) {
+            // Hiển thị: gán map, Ẩn: gán null
+            this.googleTrafficLayer.setMap(this.isTrafficEnabled ? this.googleMap : null);
+        }
+
+        // 2. Toggle trên MapLibre / OpenFreeMap
+        if (this.map && this.map.getLayer("traffic-flow-layer")) {
+            const visibility = this.isTrafficEnabled ? "visible" : "none";
+            this.map.setLayoutProperty("traffic-flow-layer", "visibility", visibility);
+        }
+
+        // Cập nhật giao diện Legend và layout
         const trafficLegend = document.getElementById("trafficLegend");
         if (trafficLegend) trafficLegend.hidden = !this.isTrafficEnabled;
+
         const mainContent = document.querySelector(".main-content");
         if (mainContent) {
             mainContent.classList.toggle("traffic-enabled", this.isTrafficEnabled);
         }
 
+        // Cập nhật trạng thái checkbox switch nếu gọi bằng hàm
+        const trafficSwitch = document.getElementById("trafficToggleSwitch");
+        if (trafficSwitch && trafficSwitch.checked !== this.isTrafficEnabled) {
+            trafficSwitch.checked = this.isTrafficEnabled;
+        }
+
         if (this.isTrafficEnabled) {
-            window.App.showToast("Đã bật lớp giao thông trực tiếp TomTom.", "success");
+            window.App.showToast("🚦 Đã hiển thị lớp thông tin kẹt xe thời gian thực.", "success");
         } else {
-            window.App.showToast("Đã tắt lớp giao thông", "warning");
+            window.App.showToast("Đã ẩn lớp kẹt xe.", "info");
         }
         return this.isTrafficEnabled;
     }

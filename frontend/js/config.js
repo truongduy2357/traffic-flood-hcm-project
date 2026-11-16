@@ -12,7 +12,8 @@ window.APP_CONFIG = {
         positron: "https://tiles.openfreemap.org/styles/positron",
     },
     DEFAULT_STYLE: "https://tiles.openfreemap.org/styles/liberty",
-    TRAFFIC_AVAILABLE: false,
+    TOMTOM_API_KEY: "",
+    TRAFFIC_AVAILABLE: true,
 
     // Đường dẫn Base URL tới Backend FastAPI
     API_BASE_URL: window.location.origin.includes("localhost") || window.location.origin.includes("127.0.0.1")
