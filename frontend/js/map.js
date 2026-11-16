@@ -205,62 +205,120 @@ class MapManager {
         window.App.showToast(`Đã chuyển kiểu bản đồ sang ${styleKey.toUpperCase()}`, "info");
     }
 
-    /**
-     * Định vị GPS vị trí hiện tại của người dùng
-     */
-    locateUser(showAlertOnSuccess = true) {
-        if (!navigator.geolocation) {
-            window.App.showToast("Thiết bị hoặc trình duyệt không hỗ trợ định vị.", "error");
-            return;
-        }
+    
+/**
+ * Định vị GPS vị trí hiện tại của người dùng.
+ * Có thông báo dự phòng khi Geolocation không hoạt động.
+ */
+locateUser(showAlertOnSuccess = true) {
 
-        navigator.geolocation.getCurrentPosition(
-            (position) => {
-                const lat = position.coords.latitude;
-                const lng = position.coords.longitude;
-
-                this.userLocation = { lat, lng };
-
-                const bounds = window.APP_CONFIG.HCM_MAX_BOUNDS;
-                const isInsideHCM = (
-                    lng >= bounds[0][0] && lng <= bounds[1][0] &&
-                    lat >= bounds[0][1] && lat <= bounds[1][1]
-                );
-
-                if (!isInsideHCM) {
-                    window.App.showToast("Vị trí ước tính của bạn nằm ngoài ranh giới TP. Hồ Chí Minh.", "warning");
-                }
-
-                this.renderUserMarker(lat, lng);
-
-                // Di chuyển êm ái tới vị trí hiện tại
-                this.map.easeTo({
-                    center: [lng, lat],
-                    zoom: 15,
-                    duration: 1200,
-                });
-
-                if (showAlertOnSuccess) {
-                    window.App.showToast("🎯 Đã định vị vị trí hiện tại của bạn!", "success");
-                }
-            },
-            (error) => {
-                console.warn("Geolocation error:", error);
-                if (showAlertOnSuccess) {
-                    let errMsg = "Không thể lấy vị trí GPS.";
-                    if (error.code === error.PERMISSION_DENIED) {
-                        errMsg = "Bạn đã từ chối quyền truy cập vị trí. Hãy bật lại quyền trong cài đặt trình duyệt.";
-                    }
-                    window.App.showToast(errMsg, "warning");
-                }
-            },
-            {
-                enableHighAccuracy: true,
-                timeout: 10000,
-                maximumAge: 30000, // Bộ nhớ đệm 30s tránh quét liên tục
-            }
+    // 1. Kiểm tra trình duyệt có hỗ trợ Geolocation không
+    if (!navigator.geolocation) {
+        window.App.showToast(
+            "Thiết bị hoặc trình duyệt không hỗ trợ định vị GPS. Bạn vẫn có thể chọn vị trí trực tiếp trên bản đồ.",
+            "warning"
         );
+        return;
     }
+
+    // 2. Yêu cầu trình duyệt cung cấp vị trí hiện tại
+    navigator.geolocation.getCurrentPosition(
+
+        // Trường hợp lấy vị trí thành công
+        (position) => {
+            const lat = position.coords.latitude;
+            const lng = position.coords.longitude;
+
+            this.userLocation = { lat, lng };
+
+            const bounds = window.APP_CONFIG.HCM_MAX_BOUNDS;
+
+            const isInsideHCM = (
+                lng >= bounds[0][0] && lng <= bounds[1][0] &&
+                lat >= bounds[0][1] && lat <= bounds[1][1]
+            );
+
+            if (!isInsideHCM) {
+                window.App.showToast(
+                    "Vị trí hiện tại nằm ngoài ranh giới TP. Hồ Chí Minh.",
+                    "warning"
+                );
+            }
+
+            // Hiển thị marker vị trí người dùng
+            this.renderUserMarker(lat, lng);
+
+            // Di chuyển bản đồ đến vị trí GPS
+            this.map.easeTo({
+                center: [lng, lat],
+                zoom: 15,
+                duration: 1200,
+            });
+
+            if (showAlertOnSuccess) {
+                window.App.showToast(
+                    "🎯 Đã xác định vị trí hiện tại của bạn!",
+                    "success"
+                );
+            }
+        },
+
+        // Trường hợp xảy ra lỗi Geolocation
+        (error) => {
+            console.warn("Geolocation error:", error);
+
+            if (!showAlertOnSuccess) return;
+
+            let title = "Không thể xác định vị trí";
+            let message = "";
+
+            switch (error.code) {
+
+                // Người dùng từ chối quyền truy cập vị trí
+                case 1:
+                    title = "Bạn chưa cấp quyền vị trí";
+                    message =
+                        "Vui lòng cho phép trình duyệt truy cập vị trí trong cài đặt quyền riêng tư. Bạn vẫn có thể chọn vị trí thủ công trên bản đồ.";
+                    break;
+
+                // Không thể xác định vị trí thiết bị
+                case 2:
+                    title = "Không tìm thấy vị trí";
+                    message =
+                        "Thiết bị chưa cung cấp được thông tin GPS. Vui lòng kiểm tra kết nối hoặc thử lại sau. Bạn có thể chọn vị trí trên bản đồ.";
+                    break;
+
+                // Quá thời gian chờ lấy vị trí
+                case 3:
+                    title = "Yêu cầu định vị quá thời gian";
+                    message =
+                        "Hệ thống chưa nhận được vị trí trong thời gian chờ. Vui lòng thử lại hoặc chọn vị trí trực tiếp trên bản đồ.";
+                    break;
+
+                // Lỗi không xác định
+                default:
+                    title = "Đã xảy ra lỗi định vị";
+                    message =
+                        "Không thể lấy vị trí hiện tại. Bạn vẫn có thể tiếp tục sử dụng bản đồ và chọn vị trí thủ công.";
+                    break;
+            }
+
+            // Hiển thị thông báo thân thiện
+            window.App.showToast(
+                `${title}. ${message}`,
+                "warning"
+            );
+        },
+
+        // Cấu hình định vị
+        {
+            enableHighAccuracy: true,
+            timeout: 10000,
+            maximumAge: 30000,
+        }
+    );
+}
+
 
     /**
      * Render Marker vị trí người dùng cố định, tĩnh, không rung lắc

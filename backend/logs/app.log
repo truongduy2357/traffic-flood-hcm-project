@@ -1,0 +1,12 @@
+2026-11-16 18:23:47 | INFO | app.main | Đang khởi động hệ thống Hệ thống Bản đồ Cảnh báo Kẹt xe và Ngập lụt TPHCM...
+2026-11-16 18:23:48 | INFO | app.main | Database 'flood_warning_db' và Spatial Index đã sẵn sàng.
+2026-11-16 18:23:48 | INFO | app.main | Hệ thống FastAPI đã khởi động.
+2026-11-16 18:24:15 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/health | STATUS=200 | DURATION=2.11ms
+2026-11-16 18:24:15 | WARNING | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/favicon.ico | STATUS=404 | DURATION=0.35ms
+2026-11-16 18:24:20 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/api/v1/config | STATUS=200 | DURATION=1.04ms
+2026-11-16 18:24:29 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/health | STATUS=200 | DURATION=0.45ms
+2026-11-16 18:45:25 | INFO | app.main | Đang khởi động hệ thống Hệ thống Bản đồ Cảnh báo Kẹt xe và Ngập lụt TPHCM...
+2026-11-16 18:45:25 | INFO | app.main | Database 'flood_warning_db' và Spatial Index đã sẵn sàng.
+2026-11-16 18:45:25 | INFO | app.main | Hệ thống FastAPI đã khởi động.
+2026-11-16 18:45:33 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/health | STATUS=200 | DURATION=1.13ms
+2026-11-16 18:48:13 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/health | STATUS=200 | DURATION=0.39ms
