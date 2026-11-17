@@ -18,6 +18,7 @@ from sqlalchemy.orm import Session
 from sqlalchemy import or_
 
 from app.core.config import settings
+from app.core.logger import app_logger
 from app.core.handleExp import AppException, handle_app_exception
 from app.core.logging_config import setup_logging, get_logger
 
@@ -27,6 +28,10 @@ from app.models.flood_report import FloodReport
 from app.middleware.cors import setup_cors
 from app.middleware.rate_limiter import setup_rate_limiting
 from app.middleware.request_logging import setup_request_logging
+
+from pathlib import Path
+from fastapi.staticfiles import StaticFiles
+from .routers import health, config, floods, routes, admin, traffic
 
 
 # ============================================================
@@ -333,3 +338,17 @@ async def root():
         "docs": "/docs",
         "health": "/health",
     }
+
+# Đăng ký các Router API
+app.include_router(health.router)
+app.include_router(config.router)
+app.include_router(floods.router)
+app.include_router(routes.router)
+app.include_router(admin.router)
+app.include_router(traffic.router)
+
+# Phục vụ Frontend Web App (HTML5, CSS3, Vanilla JS)
+frontend_dir = Path(__file__).resolve().parent.parent.parent / "frontend"
+if frontend_dir.exists():
+    app.mount("/", StaticFiles(directory=str(frontend_dir), html=True), name="frontend")
+    app_logger.info(f"Đã mount thư mục giao diện tĩnh Frontend tại: {frontend_dir}")
