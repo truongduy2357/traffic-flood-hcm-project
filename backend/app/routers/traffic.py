@@ -1,5 +1,6 @@
 """Proxy TomTom traffic-flow tiles without exposing the API key to the browser."""
-import httpx
+import urllib.request
+import urllib.error
 from fastapi import APIRouter, HTTPException, Path
 from fastapi.responses import Response
 
@@ -15,7 +16,8 @@ async def get_traffic_flow_tile(
     x: int = Path(ge=0),
     y: int = Path(ge=0),
 ):
-    if not settings.TOMTOM_API_KEY:
+    tomtom_key = getattr(settings, "TOMTOM_API_KEY", None)
+    if not tomtom_key:
         raise HTTPException(
             status_code=503,
             detail="Lớp giao thông chưa được cấu hình TOMTOM_API_KEY.",
@@ -25,32 +27,19 @@ async def get_traffic_flow_tile(
     if x >= tile_count or y >= tile_count:
         raise HTTPException(status_code=404, detail="Tile giao thông không hợp lệ.")
 
-    url = f"https://api.tomtom.com/traffic/map/4/tile/flow/relative0/{z}/{x}/{y}.png"
+    url = f"https://api.tomtom.com/traffic/map/4/tile/flow/relative0/{z}/{x}/{y}.png?key={tomtom_key}&tileSize=256"
     try:
-        async with httpx.AsyncClient(timeout=10.0) as client:
-            upstream = await client.get(url, params={"key": settings.TOMTOM_API_KEY})
-    except httpx.HTTPError as exc:
-        app_logger.warning(
-            "Không thể tải tile giao thông TomTom (%s).",
-            type(exc).__name__,
-        )
-        raise HTTPException(
-            status_code=502,
-            detail="Không thể kết nối dịch vụ giao thông TomTom.",
-        ) from exc
-
-    if upstream.status_code != 200:
-        app_logger.warning(
-            "TomTom trả về lỗi khi tải tile giao thông: HTTP %s",
-            upstream.status_code,
-        )
-        raise HTTPException(
-            status_code=502,
-            detail="Dịch vụ giao thông TomTom không trả về tile hợp lệ.",
-        )
-
-    return Response(
-        content=upstream.content,
-        media_type="image/png",
-        headers={"Cache-Control": "public, max-age=60"},
-    )
+        req = urllib.request.Request(url, headers={"User-Agent": "FastAPI-Backend"})
+        with urllib.request.urlopen(req, timeout=10.0) as resp:
+            content = resp.read()
+            return Response(
+                content=content,
+                media_type="image/png",
+                headers={"Cache-Control": "public, max-age=60"},
+            )
+    except urllib.error.HTTPError as exc:
+        app_logger.warning(f"TomTom tile HTTP error: {exc.code}")
+        raise HTTPException(status_code=exc.code, detail="Không tải được tile giao thông.")
+    except Exception as exc:
+        app_logger.warning(f"TomTom tile proxy error: {exc}")
+        raise HTTPException(status_code=502, detail="Không thể kết nối dịch vụ giao thông TomTom.")

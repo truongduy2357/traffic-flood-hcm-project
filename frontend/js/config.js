@@ -13,6 +13,9 @@ window.APP_CONFIG = {
   },
   DEFAULT_STYLE: "https://tiles.openfreemap.org/styles/liberty",
 
+  // Cấu hình Google Maps Platform API (Maps, Places Autocomplete, Directions)
+  GOOGLE_MAPS_API_KEY: "",
+
   // Cấu hình dữ liệu giao thông kẹt xe thời gian thực
   TOMTOM_API_KEY: "",
   TRAFFIC_AVAILABLE: true,

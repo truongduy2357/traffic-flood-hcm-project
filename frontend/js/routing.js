@@ -13,17 +13,76 @@ class RouteManager {
     }
 
     init() {
-        this.setupAutocomplete("originInput", "originDropdown", (item) => {
+        // Tích hợp Google Places Autocomplete API hỗ trợ gợi ý địa chỉ nhanh khi gõ (Task 37)
+        const googleOriginOk = this.setupGooglePlacesAutocomplete("originInput", (item) => {
             this.originPoint = item;
-            document.getElementById("originInput").value = item.name;
             this.addTempMarker(item.lat, item.lng, "origin", item.name);
+            window.App.showToast(`Đã chọn điểm đi (A): ${item.name}`, "info");
         });
 
-        this.setupAutocomplete("destinationInput", "destDropdown", (item) => {
+        const googleDestOk = this.setupGooglePlacesAutocomplete("destinationInput", (item) => {
             this.destPoint = item;
-            document.getElementById("destinationInput").value = item.name;
             this.addTempMarker(item.lat, item.lng, "dest", item.name);
+            window.App.showToast(`Đã chọn điểm đến (B): ${item.name}`, "info");
         });
+
+        // Bộ gợi ý địa chỉ nhanh tức thời dự phòng (Instant Places Autocomplete tại TP.HCM)
+        if (!googleOriginOk) {
+            this.setupAutocomplete("originInput", "originDropdown", (item) => {
+                this.originPoint = item;
+                document.getElementById("originInput").value = item.name;
+                this.addTempMarker(item.lat, item.lng, "origin", item.name);
+            });
+        }
+
+        if (!googleDestOk) {
+            this.setupAutocomplete("destinationInput", "destDropdown", (item) => {
+                this.destPoint = item;
+                document.getElementById("destinationInput").value = item.name;
+                this.addTempMarker(item.lat, item.lng, "dest", item.name);
+            });
+        }
+    }
+
+    /**
+     * Tích hợp Google Places Autocomplete API vào ô nhập điểm đi/đến (Task 37 - SRS FR4.1)
+     */
+    setupGooglePlacesAutocomplete(inputId, onSelect) {
+        const input = document.getElementById(inputId);
+        if (!input || !window.google || !window.google.maps || !window.google.maps.places) {
+            return false;
+        }
+
+        try {
+            // Giới hạn gợi ý trong phạm vi TP.HCM (Vĩ độ: 10.37-11.16, Kinh độ: 106.35-106.93)
+            const hcmBounds = new google.maps.LatLngBounds(
+                new google.maps.LatLng(window.APP_CONFIG.HCM_MAX_BOUNDS[0][1], window.APP_CONFIG.HCM_MAX_BOUNDS[0][0]),
+                new google.maps.LatLng(window.APP_CONFIG.HCM_MAX_BOUNDS[1][1], window.APP_CONFIG.HCM_MAX_BOUNDS[1][0])
+            );
+
+            const autocomplete = new google.maps.places.Autocomplete(input, {
+                bounds: hcmBounds,
+                componentRestrictions: { country: "vn" },
+                fields: ["formatted_address", "geometry", "name"],
+                strictBounds: false,
+            });
+
+            autocomplete.addListener("place_changed", () => {
+                const place = autocomplete.getPlace();
+                if (place.geometry && place.geometry.location) {
+                    const lat = place.geometry.location.lat();
+                    const lng = place.geometry.location.lng();
+                    const name = place.name || place.formatted_address;
+                    onSelect({ lat, lng, name });
+                }
+            });
+
+            console.log(`📍 Google Places Autocomplete API đã sẵn sàng cho #${inputId}`);
+            return true;
+        } catch (e) {
+            console.warn(`Lỗi khởi tạo Google Places Autocomplete cho #${inputId}:`, e);
+            return false;
+        }
     }
 
     /**
@@ -202,9 +261,15 @@ class RouteManager {
             // Vẽ tuyến đường lên bản đồ OpenFreeMap
             this.drawRouteOnMap(coordinates, routeIndex === 1);
 
-            // Gửi danh sách tọa độ về FastAPI backend để kiểm tra ngập (FR4.2 / Task 39, 40, 41)
-            const pointsPayload = coordinates.map((c) => ({ lat: c[1], lng: c[0] }));
-            await this.checkRouteFlood(pointsPayload, data.routes.length > 1);
+            // Gửi danh sách tọa độ và polyline về FastAPI backend để giải mã LINESTRING và chạy ST_Intersects, ST_Distance_Sphere (Task 39 & 40)
+            const pointsPayload = coordinates.map((c) => ({
+                latitude: c[1],
+                longitude: c[0],
+            }));
+
+            // Nếu OSRM/Google trả về chuỗi polyline thì gửi kèm
+            const polylineStr = typeof chosenRoute.geometry === "string" ? chosenRoute.geometry : null;
+            await this.checkRouteFlood(pointsPayload, polylineStr, data.routes.length > 1);
 
         } catch (err) {
             console.warn("OSRM error, dùng đường bay trực tiếp dự phòng:", err);
@@ -275,24 +340,29 @@ class RouteManager {
         map.fitBounds(bounds, { padding: 60, maxZoom: 16 });
     }
 
-    async checkRouteFlood(points, hasAlternatives) {
+    async checkRouteFlood(points, encodedPolyline, hasAlternatives) {
         try {
-            window.App.showLoading("Đang phân tích dữ liệu không gian né ngập...");
+            window.App.showLoading("Đang giải mã LINESTRING và kiểm tra giao cắt không gian (ST_Intersects)...");
 
             const response = await fetch(`${window.APP_CONFIG.API_BASE_URL}/api/v1/routes/check-flood`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
+                    encoded_polyline: encodedPolyline,
                     points: points,
                     buffer_meters: 60,
                 }),
             });
 
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}`);
+            }
+
             const data = await response.json();
             this.renderWarningUI(data, hasAlternatives);
         } catch (error) {
             console.error("Lỗi khi kiểm tra ngập trên tuyến đường:", error);
-            window.App.showToast("Không thể kết nối đến máy chủ kiểm tra ngập.", "warning");
+            window.App.showToast("Không thể kết nối đến API kiểm tra không gian tuyến đường.", "warning");
         } finally {
             window.App.hideLoading();
         }
@@ -308,26 +378,39 @@ class RouteManager {
 
         if (!warningBanner || !safeBanner) return;
 
-        if (checkResult.is_safe) {
+        // Tương thích cả has_flood và is_safe
+        const isDangerous = checkResult.has_flood === true || checkResult.is_safe === false;
+        const floodsList = checkResult.floods || checkResult.intercepted_floods || [];
+
+        if (!isDangerous) {
             warningBanner.classList.remove("active");
             safeBanner.classList.add("active");
             safeBanner.innerHTML = `
-                <div style="font-weight: 700; margin-bottom: 4px;"> Tuyến đường AN TOÀN!</div>
-                <div>${checkResult.warning_message}</div>
+                <div style="font-weight: 700; margin-bottom: 4px;">✅ Tuyến đường AN TOÀN!</div>
+                <div>${checkResult.warning_message || "Không phát hiện điểm ngập nào trên lộ trình di chuyển."}</div>
+                ${checkResult.linestring_wkt ? `<div style="font-size:11px; color:#166534; margin-top:4px; font-family:monospace;">ST_Intersects OK (${checkResult.total_points} điểm)</div>` : ''}
             `;
             window.App.showToast("Lộ trình an toàn, không có điểm ngập nguy hiểm!", "success");
         } else {
             safeBanner.classList.remove("active");
             warningBanner.classList.add("active");
 
-            warningDesc.textContent = checkResult.warning_message;
-            warningAction.textContent = checkResult.suggested_action;
+            if (warningDesc) {
+                warningDesc.textContent = checkResult.warning_message || "CẢNH BÁO: Tuyến đường cắt qua vùng ngập!";
+            }
+            if (warningAction) {
+                warningAction.textContent = checkResult.suggested_action || (
+                    checkResult.max_severity === "high"
+                        ? "Khuyến cáo: Mức ngập lút bánh xe, phương tiện không thể lưu thông! Vui lòng chọn lộ trình khác."
+                        : "Khuyến cáo: Đường ngập nước, nên giảm tốc độ hoặc chuyển sang tuyến đường né ngập."
+                );
+            }
 
             if (interceptedList) {
-                interceptedList.innerHTML = checkResult.intercepted_floods.map((item) => `
+                interceptedList.innerHTML = floodsList.map((item) => `
                     <div style="font-size: 12px; margin-top: 6px; padding: 6px; background: #fff5f5; border-radius: 4px; border-left: 3px solid #ef4444;">
-                        <b>• ${item.title}</b> (${item.severity_level.toUpperCase()})
-                        - Cách lộ trình: <b>${item.distance_to_route_meters}m</b>
+                        <b>• ${item.title || `Điểm ngập #${item.id}`}</b> (${(item.severity_level || "low").toUpperCase()})
+                        - Cách lộ trình: <b>${item.distance_to_route_meters || 0}m</b>
                     </div>
                 `).join("");
             }
@@ -341,7 +424,7 @@ class RouteManager {
                 }
             }
 
-            window.App.showToast(" CẢNH BÁO: Tuyến đường cắt qua điểm ngập!", "error");
+            window.App.showToast("⚠️ CẢNH BÁO: Tuyến đường cắt qua điểm ngập!", "error");
         }
     }
 

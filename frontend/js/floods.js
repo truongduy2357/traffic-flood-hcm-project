@@ -112,19 +112,36 @@ class FloodManager {
                 ${flood.severity_level === "high" ? '<div class="high-pulse"></div>' : ''}
             `;
 
-            // 2. Nội dung Popup chi tiết (Task 35)
+            // 2. Nội dung Popup / InfoWindow chi tiết (Task 35 - SRS 3.2.3)
+            // Hiển thị đầy đủ: mức nước, thời gian báo cáo, trạng thái xác minh
+            const reportedDate = new Date(flood.reported_at);
+            const timeFormatted = isNaN(reportedDate.getTime())
+                ? "Vừa xong"
+                : `${reportedDate.toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit" })} - ${reportedDate.toLocaleDateString("vi-VN")}`;
+
+            const verifiedBadge = flood.is_verified
+                ? '<span class="badge badge-low" style="background:#dcfce7;color:#166534;border:1px solid #bbf7d0;">✓ Đã xác minh (Admin)</span>'
+                : '<span class="badge badge-medium" style="background:#fef3c7;color:#92400e;border:1px solid #fde68a;">⏳ Chờ duyệt (Dân báo)</span>';
+
+            const depthText = flood.water_depth_cm ? `${flood.water_depth_cm} cm` : "Chưa ước tính";
+
             const popupHtml = `
-                <div class="flood-popup">
-                    <div class="popup-title">${flood.title}</div>
-                    <div class="popup-tags">
-                        <span class="badge ${sev.badgeClass}">${sev.icon} ${sev.label}</span>
-                        ${flood.is_verified ? '<span class="badge badge-low"> Đã duyệt</span>' : '<span class="badge badge-medium"> Dân báo</span>'}
+                <div class="flood-popup" style="min-width:220px; font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,sans-serif;">
+                    <div class="popup-title" style="font-weight:700; font-size:14px; color:#0f172a; margin-bottom:6px;">
+                        🌊 ${flood.title}
                     </div>
-                    <p class="popup-desc">${flood.description || "Không có mô tả chi tiết."}</p>
-                    <div class="popup-meta">
-                        <div> <b>Độ sâu:</b> ${flood.water_depth_cm ? flood.water_depth_cm + ' cm' : 'Chưa rõ'}</div>
-                        <div> <b>Bán kính:</b> ${flood.radius_meters || 50} mét</div>
-                        <div>🕒 <b>Báo cáo:</b> ${new Date(flood.reported_at).toLocaleTimeString("vi-VN")} ${new Date(flood.reported_at).toLocaleDateString("vi-VN")}</div>
+                    <div class="popup-tags" style="display:flex; flex-wrap:wrap; gap:4px; margin-bottom:8px;">
+                        <span class="badge ${sev.badgeClass}">${sev.icon} ${sev.label}</span>
+                        ${verifiedBadge}
+                    </div>
+                    <p class="popup-desc" style="font-size:12px; color:#475569; margin:0 0 8px; line-height:1.4;">
+                        ${flood.description || "Tình trạng đang được cộng đồng cập nhật."}
+                    </p>
+                    <div class="popup-meta" style="font-size:11px; color:#64748b; border-top:1px solid #f1f5f9; padding-top:6px; display:flex; flex-direction:column; gap:4px;">
+                        <div>📏 <b>Mức nước:</b> <span style="color:#0f172a; font-weight:600;">${sev.label.split("(")[0]} (${depthText})</span></div>
+                        <div>🕒 <b>Thời gian báo cáo:</b> <span style="color:#0f172a;">${timeFormatted}</span></div>
+                        <div>📍 <b>Trạng thái:</b> ${flood.is_verified ? '<b style="color:#166534;">Đã xác minh</b>' : '<b style="color:#92400e;">Chờ quản trị duyệt</b>'}</div>
+                        <div>🌐 <b>Bán kính ngập:</b> ${flood.radius_meters || 50} mét</div>
                     </div>
                 </div>
             `;
@@ -260,17 +277,33 @@ class FloodManager {
                 title: flood.title,
             });
 
-            // Gắn cửa sổ thông tin InfoWindow khi click vào Marker
+            // Gắn cửa sổ thông tin InfoWindow chi tiết khi click vào Marker ngập (Task 35)
+            // Hiển thị đầy đủ: mức nước, thời gian báo cáo, trạng thái xác minh
+            const reportedDate = new Date(flood.reported_at);
+            const timeFormatted = isNaN(reportedDate.getTime())
+                ? "Vừa xong"
+                : `${reportedDate.toLocaleTimeString("vi-VN", { hour: "2-digit", minute: "2-digit" })} - ${reportedDate.toLocaleDateString("vi-VN")}`;
+
+            const verifiedText = flood.is_verified
+                ? '<span style="background:#dcfce7; color:#166534; padding:2px 6px; border-radius:10px; font-weight:bold; font-size:10px;">✓ Đã xác minh</span>'
+                : '<span style="background:#fef3c7; color:#92400e; padding:2px 6px; border-radius:10px; font-weight:bold; font-size:10px;">⏳ Chờ duyệt</span>';
+
+            const depthText = flood.water_depth_cm ? `${flood.water_depth_cm} cm` : "Chưa rõ";
+
             const infoWindow = new google.maps.InfoWindow({
                 content: `
-                    <div style="font-family: Arial, sans-serif; padding: 6px; max-width: 240px;">
-                        <h4 style="margin: 0 0 4px; color: #0f172a; font-size: 14px;">${flood.title}</h4>
-                        <div style="color: ${sev.color}; font-weight: bold; font-size: 12px; margin-bottom: 4px;">
-                            ${sev.icon} ${sev.label}
+                    <div style="font-family: Arial, sans-serif; padding: 6px; max-width: 260px; line-height: 1.4;">
+                        <h4 style="margin: 0 0 6px; color: #0f172a; font-size: 14px; font-weight: bold;">🌊 ${flood.title}</h4>
+                        <div style="margin-bottom: 6px; display: flex; gap: 4px; align-items: center;">
+                            <span style="color: ${sev.color}; font-weight: bold; font-size: 12px;">${sev.icon} ${sev.label}</span>
+                            ${verifiedText}
                         </div>
-                        <p style="margin: 0 0 6px; font-size: 12px; color: #475569;">${flood.description || "Điểm cảnh báo ngập"}</p>
-                        <div style="font-size: 11px; color: #64748b;">
-                            <b>Bán kính:</b> ${flood.radius_meters || 50}m | <b>Độ sâu:</b> ${flood.water_depth_cm || "Chưa rõ"} cm
+                        <p style="margin: 0 0 6px; font-size: 12px; color: #475569;">${flood.description || "Điểm cảnh báo ngập lụt tại TP.HCM"}</p>
+                        <div style="font-size: 11px; color: #64748b; border-top: 1px solid #e2e8f0; padding-top: 6px;">
+                            <div>📏 <b>Mức nước:</b> <b style="color:#0f172a;">${sev.label.split("(")[0]} (${depthText})</b></div>
+                            <div>🕒 <b>Thời gian báo cáo:</b> ${timeFormatted}</div>
+                            <div>📍 <b>Trạng thái:</b> ${flood.is_verified ? '<span style="color:#166534;">Đã xác minh bởi Quản trị</span>' : '<span style="color:#92400e;">Báo cáo từ người dân</span>'}</div>
+                            <div>🌐 <b>Bán kính:</b> ${flood.radius_meters || 50} mét</div>
                         </div>
                     </div>
                 `,
