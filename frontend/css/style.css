@@ -147,6 +147,8 @@ body {
     justify-content: space-between;
     box-shadow: var(--shadow-md);
     gap: 12px;
+    user-select: none;
+    -webkit-user-select: none;
 }
 
 .traffic-label {
@@ -156,6 +158,8 @@ body {
     font-size: 13px;
     font-weight: 600;
     color: #334155;
+    cursor: pointer;
+    user-select: none;
 }
 
 .traffic-status {
@@ -1038,6 +1042,55 @@ input:checked + .slider:before {
 
     .brand-subtitle {
         display: none;
+    }
+
+    /* =========================================================================
+       TINH CHỈNH NÚT TOGGLE KẸT XE & CỤM ĐIỀU KHIỂN TRÊN ĐIỆN THOẠI DI ĐỘNG (Sprint 2)
+       Mục tiêu: Đảm bảo nút toggle hiển thị rõ ràng, không bị che khuất bởi
+       nút zoom bản đồ, viền màn hình hay thanh kéo sidebar khi thao tác trên mobile.
+       ========================================================================= */
+    .map-controls-top {
+        top: 10px;
+        left: 10px;
+        gap: 8px;
+        flex-direction: column;      /* Xếp dọc các thẻ để không tràn ngang màn hình */
+        align-items: flex-start;
+        max-width: calc(100vw - 70px); /* Dành khoảng trống 70px bên phải cho nút Zoom (+/-) của bản đồ */
+        z-index: 500;
+    }
+
+    .traffic-toggle-card {
+        padding: 6px 12px;           /* Thu gọn padding để tiết kiệm không gian */
+        gap: 8px;                    /* Thu gọn khoảng cách giữa các phần tử */
+        max-width: 100%;             /* Đảm bảo không vượt quá khung chứa */
+        background: rgba(255, 255, 255, 0.95);
+        box-shadow: var(--shadow-md);
+    }
+
+    .traffic-label {
+        font-size: 12px;             /* Cỡ chữ vừa vặn trên điện thoại */
+        gap: 4px;
+        white-space: nowrap;         /* Giữ chữ trên một dòng, tránh gãy dòng xấu */
+    }
+
+    /* Ẩn chữ phụ "Thời gian thực" / "Sẵn sàng" trên di động để nút gọn gàng,
+       không bị dài quá khổ gây che khuất các nút điều khiển khác */
+    .traffic-status {
+        display: none;
+    }
+
+    .switch {
+        flex-shrink: 0;              /* Đảm bảo công tắc switch không bị bóp méo khi màn hình hẹp */
+    }
+
+    .map-style-card {
+        padding: 5px 10px;
+        gap: 4px;
+        max-width: 100%;
+    }
+
+    .map-style-select {
+        font-size: 11px;
     }
 }
 
