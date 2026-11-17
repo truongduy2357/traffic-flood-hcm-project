@@ -113,6 +113,15 @@ async def on_startup():
             settings.DB_NAME,
         )
 
+    # Khởi động Task chạy ngầm tự động hạ cấp / xóa điểm ngập hết hạn (Sprint 3)
+    try:
+        import asyncio
+        from app.core.flood_cleanup import start_flood_cleanup_background_task
+        asyncio.create_task(start_flood_cleanup_background_task(interval_seconds=60))
+        logger.info("Background Task dọn dẹp điểm ngập định kỳ đã được kích hoạt.")
+    except Exception as e:
+        logger.warning("Không thể kích hoạt Background Task dọn dẹp điểm ngập: %s", e)
+
     logger.info("Hệ thống FastAPI đã khởi động.")
 
 
@@ -283,6 +292,26 @@ def get_active_floods(db: Session = Depends(get_db)):
                 "reported_at": datetime.now().isoformat(),
             },
         ]
+
+
+@app.post(
+    "/api/v1/floods/cleanup",
+    tags=["Floods"],
+    summary="Kích hoạt thủ công tác vụ hạ cấp hoặc xóa điểm ngập hết hạn",
+)
+@app.post(
+    "/floods/cleanup",
+    tags=["Floods"],
+    summary="Kích hoạt thủ công tác vụ dọn dẹp điểm ngập (Đường dẫn rút gọn)",
+)
+def trigger_flood_cleanup(db: Session = Depends(get_db)):
+    """
+    Cho phép quản trị viên hoặc kiểm thử kích hoạt ngay lập tức
+    tiến trình hạ cấp độ hoặc xóa các điểm ngập đã quá hạn expires_at
+    mà chưa có xác thực thêm.
+    """
+    from app.core.flood_cleanup import cleanup_expired_flood_reports
+    return cleanup_expired_flood_reports(db)
 
 
 # ============================================================
