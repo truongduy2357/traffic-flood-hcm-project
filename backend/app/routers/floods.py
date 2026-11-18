@@ -5,9 +5,8 @@ from typing import List
 from fastapi import APIRouter, Depends, Request, status
 from sqlalchemy.orm import Session
 from ..db.session import get_db
-from ..schemas.flood import FloodReportCreate, FloodReportResponse
+from ..schemas.flood_report import FloodReportCreate, FloodReportResponse
 from ..services.flood_service import FloodService
-from ..core.rate_limiter import check_flood_rate_limit
 
 router = APIRouter(prefix="/api/v1/floods", tags=["Floods"])
 
@@ -24,7 +23,6 @@ def list_active_floods(db: Session = Depends(get_db)):
     "",
     response_model=FloodReportResponse,
     status_code=status.HTTP_201_CREATED,
-    dependencies=[Depends(check_flood_rate_limit)],
     summary="Người dân gửi báo cáo điểm ngập lụt mới (Crowdsourcing - Rate Limited)"
 )
 def report_flood(

@@ -10,6 +10,9 @@ engine = create_engine(
     pool_recycle=3600,
     echo=settings.DEBUG,
 )
+# Thông tin loại Database đang sử dụng
+DATABASE_ENGINE_NAME = engine.dialect.name
+IS_MYSQL = DATABASE_ENGINE_NAME == "mysql"
 
 # Quản lý Session
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)

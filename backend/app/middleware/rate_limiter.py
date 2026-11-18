@@ -55,8 +55,12 @@ class RateLimiter:
     """
 
     def __init__(self, max_requests: int | None = None, window_seconds: int = 60):
-        # Nếu không truyền max_requests, lấy mặc định từ biến RATE_LIMIT_PER_MINUTE trong file .env
-        self.max_requests = max_requests or getattr(settings, "RATE_LIMIT_PER_MINUTE", 60)
+        # Nếu không truyền max_requests, lấy giá trị mặc định từ file .env
+        self.max_requests = (
+            max_requests
+            if max_requests is not None
+            else getattr(settings, "RATE_LIMIT_PER_MINUTE", 60)
+        )
         self.window_seconds = window_seconds
 
     async def __call__(self, request: Request) -> None:
