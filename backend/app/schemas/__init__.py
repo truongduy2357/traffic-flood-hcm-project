@@ -1,3 +1,4 @@
+
 """
 Package chứa các Pydantic Schemas phục vụ Request & Response Validation cho FastAPI.
 """
@@ -8,16 +9,15 @@ from app.schemas.flood_report import (
     FloodReportUpdate,
     FloodReportResponse,
 )
+
 from app.schemas.user import (
     UserRole,
     UserBase,
     UserCreate,
     UserUpdate,
     UserResponse,
-    UserLogin,
-    Token,
-    TokenData,
 )
+
 from app.schemas.spatial import (
     PointCoordinate,
     NearbyQuery,
@@ -31,21 +31,15 @@ from app.schemas.spatial import (
 )
 
 __all__ = [
-    # Flood Report
     "FloodReportBase",
     "FloodReportCreate",
     "FloodReportUpdate",
     "FloodReportResponse",
-    # User & Auth
     "UserRole",
     "UserBase",
     "UserCreate",
     "UserUpdate",
     "UserResponse",
-    "UserLogin",
-    "Token",
-    "TokenData",
-    # Spatial & Routing
     "PointCoordinate",
     "NearbyQuery",
     "BoundingBoxQuery",

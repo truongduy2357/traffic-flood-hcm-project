@@ -72,13 +72,32 @@ class FloodReportUpdate(BaseModel):
     expires_at: datetime | None = None
 
 
-# 4. Schema khi trả về cho Frontend (GET API): Hiển thị lên bản đồ
-class FloodReportResponse(FloodReportBase):
+
+# 4. Schema khi trả về cho Frontend (GET API)
+class FloodReportResponse(BaseModel):
     id: int = Field(..., description="Mã định danh duy nhất của điểm ngập")
-    reported_at: datetime = Field(..., description="Thời điểm gửi báo cáo")
-    is_verified: bool = Field(default=False, description="Đã được quản trị viên duyệt hay chưa")
+
+    latitude: float | None = Field(
+        default=None,
+        description="Vĩ độ GPS",
+    )
+
+    longitude: float | None = Field(
+        default=None,
+        description="Kinh độ GPS",
+    )
+
+    severity_level: SeverityLevel
+
+    reported_at: datetime
+    is_verified: bool = False
     expires_at: datetime | None = None
-    coordinates: list[float] | None = None
+
+    coordinates: list[float] = Field(
+        default_factory=list,
+        description="Danh sách tọa độ [latitude, longitude] gửi về Frontend",
+        examples=[[10.776889, 106.700806]],
+    )
 
     class Config:
         from_attributes = True
