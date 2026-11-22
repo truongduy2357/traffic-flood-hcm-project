@@ -12,6 +12,7 @@ from app.schemas.flood_report import FloodReportCreate, FloodReportUpdate
 from app.services.route_service import RouteService
 from app.core.config import settings
 from app.core.logger import app_logger
+from zoneinfo import ZoneInfo
 
 
 class FloodService:
@@ -35,7 +36,17 @@ class FloodService:
     def create_report(db: Session, report_in: FloodReportCreate, client_ip: str = "127.0.0.1") -> FloodReport:
         """Tạo mới báo cáo điểm ngập với chuẩn POINT SRID 4326."""
         now = datetime.now()
-        expires = report_in.expires_at or (now + timedelta(hours=settings.FLOOD_EXPIRATION_HOURS))
+        expires = report_in.expires_at
+
+        # Chuyển thời gian UTC sang giờ Việt Nam trước khi lưu MySQL DATETIME
+        if expires is not None and expires.tzinfo is not None:
+            expires = expires.astimezone(
+                ZoneInfo("Asia/Ho_Chi_Minh")
+            ).replace(tzinfo=None)
+
+        # Nếu không truyền expires_at thì tự động cộng thời gian hết hạn
+        if expires is None:
+            expires = now + timedelta(hours=settings.FLOOD_EXPIRATION_HOURS)
 
         point_wkt = create_point_wkt(report_in.latitude, report_in.longitude)
 

@@ -1114,3 +1114,258 @@ input:checked + .slider:before {
         flex: 1;
     }
 }
+
+/* =====================================================
+   TASK: TOI UU GIAO DIEN MOBILE-FIRST
+   Ho tro dien thoai, tablet va form bao cao ngap
+   ===================================================== */
+
+/* Dien thoai va man hinh nho */
+@media (max-width: 640px) {
+
+    /* 1. HEADER */
+    .app-header {
+        height: 56px;
+        min-height: 56px;
+        padding: 0 10px;
+        gap: 8px;
+    }
+
+    .brand-wrapper {
+        min-width: 0;
+        gap: 8px;
+    }
+
+    .brand-title {
+        font-size: 13px;
+        line-height: 1.3;
+    }
+
+    .brand-icon {
+        flex-shrink: 0;
+    }
+
+    .sidebar-toggle-btn {
+        min-width: 40px;
+        min-height: 40px;
+    }
+
+    /* 2. SIDEBAR - BANG DIEU KHIEN */
+    .sidebar-panel {
+        width: 100%;
+        max-width: 100%;
+        height: 75dvh;
+        max-height: calc(100dvh - 56px);
+        bottom: 0;
+        left: 0;
+        right: 0;
+        border-radius: 18px 18px 0 0;
+        overflow: hidden;
+    }
+
+    .panel-body {
+        padding: 12px;
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    /* 3. FORM TIM DUONG VA TIM KIEM */
+    .route-card {
+        padding: 12px;
+    }
+
+    .input-group {
+        width: 100%;
+        margin-bottom: 12px;
+    }
+
+    .form-control {
+        width: 100%;
+        min-width: 0;
+        min-height: 44px;
+        font-size: 16px;
+    }
+
+    .autocomplete-dropdown {
+        max-height: 35dvh;
+        overflow-y: auto;
+        z-index: 1500;
+    }
+
+    /* 4. CAC NUT BAM */
+    .btn {
+        min-height: 44px;
+        padding: 10px 12px;
+        font-size: 14px;
+        touch-action: manipulation;
+    }
+
+    .route-card > div:last-child {
+        gap: 8px;
+    }
+
+    /* 5. FORM BAO CAO DIEM NGAP */
+    .modal-overlay {
+        padding: 8px;
+        align-items: flex-end;
+    }
+
+    .modal-content {
+        width: 100%;
+        max-width: 100%;
+        max-height: calc(100dvh - 16px);
+        border-radius: 16px 16px 0 0;
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
+    }
+
+    .modal-header {
+        padding: 12px 14px;
+        flex-shrink: 0;
+    }
+
+    .modal-title {
+        font-size: 16px;
+    }
+
+    .modal-content form {
+        display: flex;
+        flex-direction: column;
+        min-height: 0;
+        overflow: hidden;
+    }
+
+    .modal-body {
+        padding: 14px;
+        max-height: calc(100dvh - 160px);
+        overflow-y: auto;
+        overscroll-behavior: contain;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .modal-body .form-control {
+        min-height: 44px;
+        font-size: 16px;
+    }
+
+    .severity-options {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 6px;
+    }
+
+    .severity-btn {
+        min-width: 0;
+        min-height: 72px;
+        padding: 8px 4px;
+        text-align: center;
+    }
+
+    .sev-text {
+        font-size: 11px;
+    }
+
+    .modal-footer {
+        padding: 12px 14px;
+        gap: 8px;
+        flex-shrink: 0;
+    }
+
+    .modal-footer .btn {
+        flex: 1;
+        min-width: 0;
+    }
+
+    /* 6. THONG BAO */
+    .toast-container {
+        top: 66px;
+        left: 10px;
+        right: 10px;
+        width: auto;
+    }
+
+    .toast {
+        width: 100%;
+        min-width: 0;
+        max-width: 100%;
+    }
+
+    /* 7. CANH BAO TUYEN DUONG */
+    .route-warning-banner,
+    .route-safe-banner {
+        padding: 12px;
+        font-size: 13px;
+        overflow-wrap: anywhere;
+    }
+
+    /* 8. DIEU KHIEN BAN DO */
+    .map-controls-top {
+        top: 10px;
+        left: 10px;
+        max-width: calc(100vw - 70px);
+    }
+
+    .traffic-toggle-card,
+    .map-style-card {
+        max-width: 100%;
+    }
+}
+
+/* Dien thoai rat nho */
+@media (max-width: 380px) {
+
+    .brand-title {
+        font-size: 12px;
+    }
+
+    .panel-body {
+        padding: 10px;
+    }
+
+    .severity-options {
+        grid-template-columns: 1fr;
+    }
+
+    .severity-btn {
+        flex-direction: row;
+        justify-content: center;
+        min-height: 48px;
+    }
+
+    .modal-footer {
+        flex-direction: column;
+    }
+
+    .modal-footer .btn {
+        width: 100%;
+    }
+}
+
+/* Tablet */
+@media (min-width: 641px) and (max-width: 1023px) {
+
+    .sidebar-panel {
+        width: min(420px, 55vw);
+        max-width: 100%;
+    }
+
+    .panel-body {
+        padding: 14px;
+    }
+
+    .modal-content {
+        width: min(480px, calc(100vw - 32px));
+    }
+
+    .form-control {
+        min-height: 44px;
+    }
+
+    .btn {
+        min-height: 44px;
+    }
+}
+
+/* Ket thuc toi uu Mobile-first */
+
