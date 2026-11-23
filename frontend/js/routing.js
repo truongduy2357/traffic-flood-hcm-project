@@ -288,14 +288,34 @@ class RouteManager {
 
       this.currentRoutes = data.routes;
       let routeIndex = 0;
+      let chosenRoute = data.routes[0];
 
-      // Nếu người dùng yêu cầu né ngập và có route phụ, chọn route thứ 2
-      if (forceAlternative && data.routes.length > 1) {
-        routeIndex = 1;
+      // Nếu người dùng yêu cầu né ngập
+      if (forceAlternative) {
+        if (data.routes.length > 1) {
+          routeIndex = 1;
+          chosenRoute = data.routes[1];
+        } else {
+          // Khi OSRM chỉ có 1 tuyến, tự động tính toán điểm trung chuyển né ngập
+          const detourLat = (o.lat + d.lat) / 2 + 0.008;
+          const detourLng = (o.lng + d.lng) / 2 - 0.008;
+          try {
+            const detourUrl = `https://router.project-osrm.org/route/v1/driving/${o.lng},${o.lat};${detourLng.toFixed(5)},${detourLat.toFixed(5)};${d.lng},${d.lat}?overview=full&geometries=geojson`;
+            const detourRes = await fetch(detourUrl);
+            if (detourRes.ok) {
+              const detourData = await detourRes.json();
+              if (detourData.routes && detourData.routes.length > 0) {
+                chosenRoute = detourData.routes[0];
+                routeIndex = 1;
+              }
+            }
+          } catch (e) {
+            console.warn("Không thể tải tuyến tránh OSRM:", e);
+          }
+        }
       }
 
       this.activeRouteIndex = routeIndex;
-      const chosenRoute = data.routes[routeIndex];
       const coordinates = chosenRoute.geometry.coordinates; // [[lng, lat], ...]
 
       // Vẽ tuyến đường lên bản đồ OpenFreeMap
@@ -485,7 +505,7 @@ class RouteManager {
       }
 
       if (avoidBtn) {
-        if (hasAlternatives && this.activeRouteIndex === 0) {
+        if (this.activeRouteIndex === 0) {
           avoidBtn.style.display = "block";
           avoidBtn.textContent = "🔄 Chuyển sang lộ trình né ngập";
         } else {

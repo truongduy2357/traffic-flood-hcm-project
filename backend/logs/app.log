@@ -2506,3 +2506,35 @@ sqlalchemy.exc.OperationalError: (pymysql.err.OperationalError) (1045, "Access d
 2026-11-23 17:27:15 | INFO | app.api_access | IP=127.0.0.1 | METHOD=POST | PATH=/api/v1/floods | STATUS=201 | DURATION=13.57ms
 2026-11-23 17:27:15 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/api/v1/floods | STATUS=200 | DURATION=5.04ms
 2026-11-23 17:28:56 | INFO | app.flood_cleanup | Background Task dọn dẹp điểm ngập đã được yêu cầu dừng.
+2026-11-23 17:29:06 | INFO | app.main | Đang khởi động hệ thống Hệ thống Bản đồ Cảnh báo Kẹt xe và Ngập lụt TPHCM...
+2026-11-23 17:29:06 | INFO | app.main | Database 'flood_warning_db' và Spatial Index đã sẵn sàng.
+2026-11-23 17:29:06 | INFO | app.main | Background Task dọn dẹp điểm ngập định kỳ đã được kích hoạt.
+2026-11-23 17:29:06 | INFO | app.main | Hệ thống FastAPI đã khởi động.
+2026-11-23 17:29:06 | INFO | app.flood_cleanup | Bắt đầu Background Task tự động dọn dẹp điểm ngập (Chu kỳ: 60 giây/lần)
+2026-11-23 17:29:10 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/ | STATUS=200 | DURATION=88.43ms
+2026-11-23 17:29:10 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/css/style.css | STATUS=200 | DURATION=6.18ms
+2026-11-23 17:29:10 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/js/config.js | STATUS=200 | DURATION=9.13ms
+2026-11-23 17:29:10 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/js/report.js | STATUS=200 | DURATION=5.74ms
+2026-11-23 17:29:10 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/js/map.js | STATUS=200 | DURATION=6.18ms
+2026-11-23 17:29:10 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/js/routing.js | STATUS=200 | DURATION=6.99ms
+2026-11-23 17:29:10 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/js/floods.js | STATUS=200 | DURATION=7.47ms
+2026-11-23 17:29:10 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/js/app.js | STATUS=200 | DURATION=3.27ms
+2026-11-23 17:29:10 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/api/v1/config | STATUS=200 | DURATION=1.64ms
+2026-11-23 17:29:11 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/api/v1/floods | STATUS=200 | DURATION=11.18ms
+2026-11-23 17:29:12 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/docs | STATUS=200 | DURATION=0.34ms
+2026-11-23 17:29:12 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/openapi.json | STATUS=200 | DURATION=57.83ms
+2026-11-23 17:40:27 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/ | STATUS=200 | DURATION=2.03ms
+2026-11-23 17:40:27 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/css/style.css | STATUS=200 | DURATION=5.79ms
+2026-11-23 17:40:27 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/js/config.js | STATUS=200 | DURATION=6.20ms
+2026-11-23 17:40:27 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/js/map.js | STATUS=200 | DURATION=4.75ms
+2026-11-23 17:40:27 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/js/floods.js | STATUS=200 | DURATION=5.17ms
+2026-11-23 17:40:27 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/js/report.js | STATUS=200 | DURATION=5.84ms
+2026-11-23 17:40:27 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/js/routing.js | STATUS=200 | DURATION=6.15ms
+2026-11-23 17:40:27 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/js/app.js | STATUS=200 | DURATION=3.31ms
+2026-11-23 17:40:28 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/api/v1/config | STATUS=200 | DURATION=0.51ms
+2026-11-23 17:40:28 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/api/v1/floods | STATUS=200 | DURATION=5.74ms
+2026-11-23 17:41:02 | INFO | app.api_access | IP=127.0.0.1 | METHOD=POST | PATH=/api/v1/floods | STATUS=201 | DURATION=17.86ms
+2026-11-23 17:41:02 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/api/v1/floods | STATUS=200 | DURATION=5.06ms
+2026-11-23 17:41:50 | INFO | app.api_access | IP=127.0.0.1 | METHOD=POST | PATH=/api/v1/routes/check-flood | STATUS=200 | DURATION=10.16ms
+2026-11-23 17:43:12 | INFO | app.api_access | IP=127.0.0.1 | METHOD=POST | PATH=/api/v1/routes/check-flood | STATUS=200 | DURATION=8.44ms
+2026-11-23 17:43:19 | INFO | app.api_access | IP=127.0.0.1 | METHOD=POST | PATH=/api/v1/routes/check-flood | STATUS=200 | DURATION=5.24ms
