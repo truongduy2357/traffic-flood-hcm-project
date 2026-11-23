@@ -17,8 +17,14 @@ class FloodManager {
             const response = await fetch(`${window.APP_CONFIG.API_BASE_URL}/api/v1/floods`);
             if (!response.ok) throw new Error(`HTTP ${response.status}`);
 
-            this.floods = await response.json();
-            console.log(`Đã tải ${this.floods.length} điểm ngập từ máy chủ.`);
+            const data = await response.json();
+            if (Array.isArray(data) && data.length > 0) {
+                this.floods = data;
+                console.log(`Đã tải ${this.floods.length} điểm ngập từ máy chủ.`);
+            } else {
+                console.log("CSDL chưa có dữ liệu hoặc danh sách trống, hiển thị 3 điểm ngập mẫu TP.HCM.");
+                this.floods = this.getSampleFloods();
+            }
 
             this.clearMapElements();
             this.renderOnMap();
