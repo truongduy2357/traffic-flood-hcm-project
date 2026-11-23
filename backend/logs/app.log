@@ -2443,3 +2443,66 @@ sqlalchemy.exc.OperationalError: (pymysql.err.OperationalError) (1045, "Access d
 2026-11-23 16:59:05 | INFO | app.main | Background Task dọn dẹp điểm ngập định kỳ đã được kích hoạt.
 2026-11-23 16:59:05 | INFO | app.main | Hệ thống FastAPI đã khởi động.
 2026-11-23 16:59:05 | INFO | app.flood_cleanup | Bắt đầu Background Task tự động dọn dẹp điểm ngập (Chu kỳ: 60 giây/lần)
+2026-11-23 17:09:47 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/ | STATUS=304 | DURATION=84.23ms
+2026-11-23 17:09:47 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/js/routing.js | STATUS=304 | DURATION=1.60ms
+2026-11-23 17:09:47 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/api/v1/config | STATUS=200 | DURATION=2.10ms
+2026-11-23 17:09:47 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/api/v1/floods | STATUS=200 | DURATION=8.30ms
+2026-11-23 17:09:54 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/docs | STATUS=200 | DURATION=0.36ms
+2026-11-23 17:09:54 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/openapi.json | STATUS=200 | DURATION=43.72ms
+2026-11-23 17:09:59 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/ | STATUS=304 | DURATION=1.82ms
+2026-11-23 17:09:59 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/api/v1/config | STATUS=200 | DURATION=0.42ms
+2026-11-23 17:10:00 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/api/v1/floods | STATUS=200 | DURATION=4.21ms
+2026-11-23 17:10:03 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/ | STATUS=200 | DURATION=2.24ms
+2026-11-23 17:10:03 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/css/style.css | STATUS=200 | DURATION=6.93ms
+2026-11-23 17:10:03 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/js/config.js | STATUS=200 | DURATION=7.98ms
+2026-11-23 17:10:03 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/js/map.js | STATUS=200 | DURATION=6.01ms
+2026-11-23 17:10:03 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/js/routing.js | STATUS=200 | DURATION=7.03ms
+2026-11-23 17:10:03 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/js/report.js | STATUS=200 | DURATION=7.32ms
+2026-11-23 17:10:03 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/js/floods.js | STATUS=200 | DURATION=7.59ms
+2026-11-23 17:10:03 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/js/app.js | STATUS=200 | DURATION=3.28ms
+2026-11-23 17:10:03 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/api/v1/config | STATUS=200 | DURATION=0.59ms
+2026-11-23 17:10:04 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/api/v1/floods | STATUS=200 | DURATION=3.85ms
+2026-11-23 17:10:07 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/docs | STATUS=200 | DURATION=0.44ms
+2026-11-23 17:10:08 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/openapi.json | STATUS=200 | DURATION=0.74ms
+2026-11-23 17:15:05 | INFO | app.flood_cleanup | Background Task dọn dẹp điểm ngập đã được yêu cầu dừng.
+2026-11-23 17:15:07 | INFO | app.main | Đang khởi động hệ thống Hệ thống Bản đồ Cảnh báo Kẹt xe và Ngập lụt TPHCM...
+2026-11-23 17:15:07 | INFO | app.main | Database 'flood_warning_db' và Spatial Index đã sẵn sàng.
+2026-11-23 17:15:07 | INFO | app.main | Background Task dọn dẹp điểm ngập định kỳ đã được kích hoạt.
+2026-11-23 17:15:07 | INFO | app.main | Hệ thống FastAPI đã khởi động.
+2026-11-23 17:15:07 | INFO | app.flood_cleanup | Bắt đầu Background Task tự động dọn dẹp điểm ngập (Chu kỳ: 60 giây/lần)
+2026-11-23 17:16:14 | INFO | app.flood_cleanup | Background Task dọn dẹp điểm ngập đã được yêu cầu dừng.
+2026-11-23 17:16:15 | INFO | app.main | Đang khởi động hệ thống Hệ thống Bản đồ Cảnh báo Kẹt xe và Ngập lụt TPHCM...
+2026-11-23 17:16:15 | INFO | app.main | Database 'flood_warning_db' và Spatial Index đã sẵn sàng.
+2026-11-23 17:16:15 | INFO | app.main | Background Task dọn dẹp điểm ngập định kỳ đã được kích hoạt.
+2026-11-23 17:16:15 | INFO | app.main | Hệ thống FastAPI đã khởi động.
+2026-11-23 17:16:15 | INFO | app.flood_cleanup | Bắt đầu Background Task tự động dọn dẹp điểm ngập (Chu kỳ: 60 giây/lần)
+2026-11-23 17:23:31 | INFO | app.api_access | IP=127.0.0.1 | METHOD=POST | PATH=/api/v1/floods | STATUS=201 | DURATION=33.78ms
+2026-11-23 17:23:31 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/api/v1/floods | STATUS=200 | DURATION=8.50ms
+2026-11-23 17:24:38 | INFO | app.api_access | IP=127.0.0.1 | METHOD=POST | PATH=/api/v1/routes/check-flood | STATUS=200 | DURATION=22.59ms
+2026-11-23 17:26:19 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/ | STATUS=304 | DURATION=86.69ms
+2026-11-23 17:26:19 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/js/floods.js | STATUS=304 | DURATION=1.30ms
+2026-11-23 17:26:19 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/api/v1/config | STATUS=200 | DURATION=2.58ms
+2026-11-23 17:26:20 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/api/v1/floods | STATUS=200 | DURATION=4.58ms
+2026-11-23 17:26:45 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/ | STATUS=200 | DURATION=2.00ms
+2026-11-23 17:26:45 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/css/style.css | STATUS=200 | DURATION=4.70ms
+2026-11-23 17:26:45 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/js/config.js | STATUS=200 | DURATION=6.63ms
+2026-11-23 17:26:45 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/js/report.js | STATUS=200 | DURATION=4.83ms
+2026-11-23 17:26:45 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/js/map.js | STATUS=200 | DURATION=6.50ms
+2026-11-23 17:26:45 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/js/floods.js | STATUS=200 | DURATION=5.52ms
+2026-11-23 17:26:45 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/js/routing.js | STATUS=200 | DURATION=5.80ms
+2026-11-23 17:26:45 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/js/app.js | STATUS=200 | DURATION=2.58ms
+2026-11-23 17:26:45 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/api/v1/config | STATUS=200 | DURATION=0.68ms
+2026-11-23 17:26:45 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/api/v1/floods | STATUS=200 | DURATION=5.55ms
+2026-11-23 17:27:02 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/ | STATUS=200 | DURATION=2.60ms
+2026-11-23 17:27:03 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/css/style.css | STATUS=200 | DURATION=7.58ms
+2026-11-23 17:27:03 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/js/config.js | STATUS=200 | DURATION=8.51ms
+2026-11-23 17:27:03 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/js/map.js | STATUS=200 | DURATION=5.83ms
+2026-11-23 17:27:03 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/js/floods.js | STATUS=200 | DURATION=6.22ms
+2026-11-23 17:27:03 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/js/report.js | STATUS=200 | DURATION=5.67ms
+2026-11-23 17:27:03 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/js/routing.js | STATUS=200 | DURATION=6.61ms
+2026-11-23 17:27:03 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/js/app.js | STATUS=200 | DURATION=2.85ms
+2026-11-23 17:27:03 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/api/v1/config | STATUS=200 | DURATION=0.59ms
+2026-11-23 17:27:03 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/api/v1/floods | STATUS=200 | DURATION=5.29ms
+2026-11-23 17:27:15 | INFO | app.api_access | IP=127.0.0.1 | METHOD=POST | PATH=/api/v1/floods | STATUS=201 | DURATION=13.57ms
+2026-11-23 17:27:15 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/api/v1/floods | STATUS=200 | DURATION=5.04ms
+2026-11-23 17:28:56 | INFO | app.flood_cleanup | Background Task dọn dẹp điểm ngập đã được yêu cầu dừng.
