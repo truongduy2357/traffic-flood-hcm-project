@@ -5,6 +5,8 @@ import sqlalchemy as sa
 from sqlalchemy import (
     Column,
     Integer,
+    String,
+    Text,
     DateTime,
     Boolean,
     Enum,
@@ -50,6 +52,18 @@ class FloodReport(Base):
         comment="Khóa chính tự tăng của báo cáo ngập",
     )
 
+    title = Column(
+        String(255),
+        nullable=True,
+        comment="Tên tuyến đường hoặc khu vực ngập",
+    )
+
+    description = Column(
+        Text,
+        nullable=True,
+        comment="Mô tả chi tiết tình trạng ngập",
+    )
+
     # Cột location kiểu POINT SRID 4326 (Bắt buộc NOT NULL để tạo SPATIAL INDEX trong MySQL)
     location = Column(
         Point(srid=4326),
@@ -66,6 +80,20 @@ class FloodReport(Base):
         nullable=False,
         default=SeverityLevel.LOW,
         comment="Mức độ ngập: low (mắt cá chân), medium (nửa bánh xe), high (lút bánh xe)",
+    )
+
+    water_depth_cm = Column(
+        Integer,
+        nullable=True,
+        comment="Độ sâu ước lượng của mực nước (cm)",
+    )
+
+    radius_meters = Column(
+        Integer,
+        nullable=False,
+        default=50,
+        server_default=sa.text("50"),
+        comment="Bán kính vùng ngập ảnh hưởng (mét)",
     )
 
     reported_at = Column(
@@ -132,7 +160,7 @@ class FloodReport(Base):
 
     def __repr__(self) -> str:
         return (
-            f"<FloodReport(id={self.id}, severity='{self.severity_level}', "
+            f"<FloodReport(id={self.id}, title='{self.title}', severity='{self.severity_level}', "
             f"location='{self.location}', is_verified={self.is_verified})>"
         )
 

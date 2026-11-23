@@ -132,7 +132,7 @@ class RouteService:
                 ST_X(fr.location) AS latitude,
                 ST_Y(fr.location) AS longitude,
                 -- Tính khoảng cách đường cong cầu (mét) từ điểm ngập tới tuyến đường LINESTRING
-                ROUND(ST_Distance_Sphere(fr.location, ST_GeomFromText(:linestring, 4326)), 1) AS distance_to_route_meters
+                ROUND(ST_Distance(fr.location, ST_GeomFromText(:linestring, 4326)) * 111139.0, 1) AS distance_to_route_meters
             FROM flood_reports fr
             WHERE (fr.expires_at IS NULL OR fr.expires_at > NOW())
               AND (
@@ -140,7 +140,7 @@ class RouteService:
                   ST_Intersects(fr.location, ST_GeomFromText(:linestring, 4326))
                   OR
                   -- 2. Hoặc khoảng cách từ điểm ngập tới đường đi nằm trong bán kính ảnh hưởng
-                  ST_Distance_Sphere(fr.location, ST_GeomFromText(:linestring, 4326)) <= :buffer_meters
+                  ST_Distance(fr.location, ST_GeomFromText(:linestring, 4326)) <= (:buffer_meters / 111139.0)
               )
             ORDER BY distance_to_route_meters ASC,
                      FIELD(fr.severity_level, 'high', 'medium', 'low');

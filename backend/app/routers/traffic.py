@@ -25,7 +25,7 @@ router = APIRouter(prefix="/api/v1/traffic", tags=["Traffic"])
         503: {"description": "Dịch vụ giao thông chưa được kích hoạt khóa API Key"}
     }
 )
-async def get_traffic_flow_tile(
+def get_traffic_flow_tile(
     z: int = Path(..., ge=0, le=22, description="Cấp độ thu phóng (Zoom level: 0 - 22)"),
     x: int = Path(..., ge=0, description="Tọa độ cột x của tile"),
     y: int = Path(..., ge=0, description="Tọa độ hàng y của tile"),

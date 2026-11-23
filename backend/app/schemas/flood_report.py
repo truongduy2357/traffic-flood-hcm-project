@@ -1,5 +1,5 @@
 from datetime import datetime
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 from app.models.flood_report import SeverityLevel
 from app.core.config import settings
 
@@ -77,6 +77,18 @@ class FloodReportUpdate(BaseModel):
 class FloodReportResponse(BaseModel):
     id: int = Field(..., description="Mã định danh duy nhất của điểm ngập")
 
+    title: str | None = Field(
+        default=None,
+        description="Tên tuyến đường hoặc khu vực ngập",
+        examples=["Đường Nguyễn Hữu Cảnh, Bình Thạnh"],
+    )
+
+    description: str | None = Field(
+        default=None,
+        description="Mô tả chi tiết tình trạng ngập",
+        examples=["Nước ngập nửa bánh xe, xe máy di chuyển khó khăn"],
+    )
+
     latitude: float | None = Field(
         default=None,
         description="Vĩ độ GPS",
@@ -88,6 +100,23 @@ class FloodReportResponse(BaseModel):
     )
 
     severity_level: SeverityLevel
+
+    water_depth_cm: int | None = Field(
+        default=None,
+        description="Độ sâu ước lượng của mực nước (cm)",
+        examples=[30],
+    )
+
+    radius_meters: int = Field(
+        default=50,
+        description="Bán kính vùng ngập ảnh hưởng (mét)",
+        examples=[50],
+    )
+
+    @field_validator("radius_meters", mode="before")
+    @classmethod
+    def set_default_radius(cls, v):
+        return 50 if v is None else v
 
     reported_at: datetime
     is_verified: bool = False

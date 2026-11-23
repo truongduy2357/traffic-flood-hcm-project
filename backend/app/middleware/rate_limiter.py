@@ -68,11 +68,11 @@ class RateLimiter:
         now = time.time()
 
         # Lấy danh sách lịch sử gọi API của IP này
-        timestamps = _ip_request_history[client_ip]
+        timestamps = _ip_request_history[client_ip, request.url.path]
 
         # 1. Loại bỏ các mốc thời gian cũ hơn cửa sổ window_seconds
         valid_timestamps = [t for t in timestamps if now - t < self.window_seconds]
-        _ip_request_history[client_ip] = valid_timestamps
+        _ip_request_history[client_ip, request.url.path] = valid_timestamps
 
         # 2. Kiểm tra nếu số lần gọi vượt quá mức cho phép
         if len(valid_timestamps) >= self.max_requests:
@@ -83,7 +83,7 @@ class RateLimiter:
             )
 
         # 3. Ghi nhận thời điểm gửi request hợp lệ này
-        _ip_request_history[client_ip].append(now)
+        _ip_request_history[client_ip, request.url.path].append(now)
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -116,9 +116,12 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
             client_ip = get_client_ip(request)
             now = time.time()
 
-            timestamps = _ip_request_history[client_ip]
+            timestamps = _ip_request_history[client_ip, request.url.path]
             valid_timestamps = [t for t in timestamps if now - t < self.window_seconds]
-            _ip_request_history[client_ip] = valid_timestamps
+            if not valid_timestamps:
+                _ip_request_history.pop((client_ip, request.url.path), None)
+            else:
+                _ip_request_history[(client_ip, request.url.path)] = valid_timestamps
 
             # Đối với endpoint nhạy cảm (như gửi báo cáo), giới hạn chặt hơn (ví dụ 10 lần/phút)
             limit = 10 if "/floods" in request.url.path else self.max_requests
@@ -137,7 +140,7 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
                     },
                 )
 
-            _ip_request_history[client_ip].append(now)
+            _ip_request_history[client_ip, request.url.path].append(now)
 
         # Cho phép request tiếp tục chạy bình thường
         response = await call_next(request)

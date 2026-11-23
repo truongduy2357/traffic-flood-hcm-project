@@ -202,121 +202,121 @@ async def get_system_config():
 # 8. API FLOODS (Sprint 3) - TRUY VẤN DANH SÁCH ĐIỂM NGẬP ĐANG HOẠT ĐỘNG
 # ============================================================
 
-@app.get(
-    "/api/v1/floods",
-    tags=["Floods"],
-    summary="Lấy danh sách điểm ngập đang hoạt động từ CSDL MySQL",
-)
-@app.get(
-    "/floods",
-    tags=["Floods"],
-    summary="Lấy danh sách điểm ngập đang hoạt động (Đường dẫn rút gọn)",
-)
-def get_active_floods(db: Session = Depends(get_db)):
-    """
-    Truy vấn danh sách các điểm ngập đang hoạt động từ CSDL MySQL.
-    - Điều kiện: expires_at IS NULL hoặc expires_at > NOW() (chưa hết hạn).
-    - Trả về: Danh sách JSON điểm ngập gồm tọa độ GPS, mức độ ngập và bán kính.
-    """
-    try:
-        now = datetime.now()
-        # Truy vấn các điểm ngập còn hiệu lực từ CSDL MySQL
-        active_reports = (
-            db.query(FloodReport)
-            .filter(
-                or_(
-                    FloodReport.expires_at.is_(None),
-                    FloodReport.expires_at > now,
-                )
-            )
-            .order_by(FloodReport.reported_at.desc())
-            .all()
-        )
+# @app.get(
+#     "/api/v1/floods",
+#     tags=["Floods"],
+#     summary="Lấy danh sách điểm ngập đang hoạt động từ CSDL MySQL",
+# )
+# @app.get(
+#     "/floods",
+#     tags=["Floods"],
+#     summary="Lấy danh sách điểm ngập đang hoạt động (Đường dẫn rút gọn)",
+# )
+# def get_active_floods(db: Session = Depends(get_db)):
+#     """
+#     Truy vấn danh sách các điểm ngập đang hoạt động từ CSDL MySQL.
+#     - Điều kiện: expires_at IS NULL hoặc expires_at > NOW() (chưa hết hạn).
+#     - Trả về: Danh sách JSON điểm ngập gồm tọa độ GPS, mức độ ngập và bán kính.
+#     """
+#     try:
+#         now = datetime.now()
+#         # Truy vấn các điểm ngập còn hiệu lực từ CSDL MySQL
+#         active_reports = (
+#             db.query(FloodReport)
+#             .filter(
+#                 or_(
+#                     FloodReport.expires_at.is_(None),
+#                     FloodReport.expires_at > now,
+#                 )
+#             )
+#             .order_by(FloodReport.reported_at.desc())
+#             .all()
+#         )
 
-        results = []
-        for r in active_reports:
-            lat = r.latitude
-            lng = r.longitude
-            if lat is not None and lng is not None:
-                sev_val = r.severity_level.value if hasattr(r.severity_level, "value") else str(r.severity_level)
-                depth = 45 if sev_val == "high" else (30 if sev_val == "medium" else 15)
-                results.append({
-                    "id": r.id,
-                    "title": f"Điểm ngập #{r.id}",
-                    "description": f"Mức độ: {sev_val}",
-                    "latitude": lat,
-                    "longitude": lng,
-                    "severity_level": sev_val,
-                    "water_depth_cm": depth,
-                    "radius_meters": 60 if sev_val == "high" else 50,
-                    "is_verified": bool(r.is_verified),
-                    "reported_at": r.reported_at.isoformat() if r.reported_at else now.isoformat(),
-                    "expires_at": r.expires_at.isoformat() if r.expires_at else None,
-                })
+#         results = []
+#         for r in active_reports:
+#             lat = r.latitude
+#             lng = r.longitude
+#             if lat is not None and lng is not None:
+#                 sev_val = r.severity_level.value if hasattr(r.severity_level, "value") else str(r.severity_level)
+#                 depth = 45 if sev_val == "high" else (30 if sev_val == "medium" else 15)
+#                 results.append({
+#                     "id": r.id,
+#                     "title": f"Điểm ngập #{r.id}",
+#                     "description": f"Mức độ: {sev_val}",
+#                     "latitude": lat,
+#                     "longitude": lng,
+#                     "severity_level": sev_val,
+#                     "water_depth_cm": depth,
+#                     "radius_meters": 60 if sev_val == "high" else 50,
+#                     "is_verified": bool(r.is_verified),
+#                     "reported_at": r.reported_at.isoformat() if r.reported_at else now.isoformat(),
+#                     "expires_at": r.expires_at.isoformat() if r.expires_at else None,
+#                 })
 
-        return results
+#         return results
 
-    except Exception as e:
-        logger.warning("Không thể truy vấn CSDL MySQL, trả về danh sách mẫu dự phòng: %s", e)
-        # Dữ liệu mẫu dự phòng tại TP.HCM (đảm bảo sinh viên luôn test được frontend ngay cả khi chưa bật MySQL)
-        return [
-            {
-                "id": 1,
-                "title": "Đường Nguyễn Hữu Cảnh, Bình Thạnh",
-                "description": "Ngập sâu đoạn chân cầu Thủ Thiêm, xe chết máy hàng loạt",
-                "latitude": 10.7932,
-                "longitude": 106.7214,
-                "severity_level": "high",
-                "water_depth_cm": 45,
-                "radius_meters": 80,
-                "is_verified": True,
-                "reported_at": datetime.now().isoformat(),
-            },
-            {
-                "id": 2,
-                "title": "Đường Huỳnh Tấn Phát, Quận 7",
-                "description": "Triều cường dâng cao ngập nửa bánh xe",
-                "latitude": 10.7428,
-                "longitude": 106.7325,
-                "severity_level": "medium",
-                "water_depth_cm": 30,
-                "radius_meters": 60,
-                "is_verified": True,
-                "reported_at": datetime.now().isoformat(),
-            },
-            {
-                "id": 3,
-                "title": "Đường Quốc Hương, Thảo Điền",
-                "description": "Nước ngập mắt cá chân, các phương tiện di chuyển chậm",
-                "latitude": 10.8045,
-                "longitude": 106.7321,
-                "severity_level": "low",
-                "water_depth_cm": 15,
-                "radius_meters": 40,
-                "is_verified": False,
-                "reported_at": datetime.now().isoformat(),
-            },
-        ]
+#     except Exception as e:
+#         logger.warning("Không thể truy vấn CSDL MySQL, trả về danh sách mẫu dự phòng: %s", e)
+#         # Dữ liệu mẫu dự phòng tại TP.HCM (đảm bảo sinh viên luôn test được frontend ngay cả khi chưa bật MySQL)
+#         return [
+#             {
+#                 "id": 1,
+#                 "title": "Đường Nguyễn Hữu Cảnh, Bình Thạnh",
+#                 "description": "Ngập sâu đoạn chân cầu Thủ Thiêm, xe chết máy hàng loạt",
+#                 "latitude": 10.7932,
+#                 "longitude": 106.7214,
+#                 "severity_level": "high",
+#                 "water_depth_cm": 45,
+#                 "radius_meters": 80,
+#                 "is_verified": True,
+#                 "reported_at": datetime.now().isoformat(),
+#             },
+#             {
+#                 "id": 2,
+#                 "title": "Đường Huỳnh Tấn Phát, Quận 7",
+#                 "description": "Triều cường dâng cao ngập nửa bánh xe",
+#                 "latitude": 10.7428,
+#                 "longitude": 106.7325,
+#                 "severity_level": "medium",
+#                 "water_depth_cm": 30,
+#                 "radius_meters": 60,
+#                 "is_verified": True,
+#                 "reported_at": datetime.now().isoformat(),
+#             },
+#             {
+#                 "id": 3,
+#                 "title": "Đường Quốc Hương, Thảo Điền",
+#                 "description": "Nước ngập mắt cá chân, các phương tiện di chuyển chậm",
+#                 "latitude": 10.8045,
+#                 "longitude": 106.7321,
+#                 "severity_level": "low",
+#                 "water_depth_cm": 15,
+#                 "radius_meters": 40,
+#                 "is_verified": False,
+#                 "reported_at": datetime.now().isoformat(),
+#             },
+#         ]
 
 
-@app.post(
-    "/api/v1/floods/cleanup",
-    tags=["Floods"],
-    summary="Kích hoạt thủ công tác vụ hạ cấp hoặc xóa điểm ngập hết hạn",
-)
-@app.post(
-    "/floods/cleanup",
-    tags=["Floods"],
-    summary="Kích hoạt thủ công tác vụ dọn dẹp điểm ngập (Đường dẫn rút gọn)",
-)
-def trigger_flood_cleanup(db: Session = Depends(get_db)):
-    """
-    Cho phép quản trị viên hoặc kiểm thử kích hoạt ngay lập tức
-    tiến trình hạ cấp độ hoặc xóa các điểm ngập đã quá hạn expires_at
-    mà chưa có xác thực thêm.
-    """
-    from app.core.flood_cleanup import cleanup_expired_flood_reports
-    return cleanup_expired_flood_reports(db)
+# @app.post(
+#     "/api/v1/floods/cleanup",
+#     tags=["Floods"],
+#     summary="Kích hoạt thủ công tác vụ hạ cấp hoặc xóa điểm ngập hết hạn",
+# )
+# @app.post(
+#     "/floods/cleanup",
+#     tags=["Floods"],
+#     summary="Kích hoạt thủ công tác vụ dọn dẹp điểm ngập (Đường dẫn rút gọn)",
+# )
+# def trigger_flood_cleanup(db: Session = Depends(get_db)):
+#     """
+#     Cho phép quản trị viên hoặc kiểm thử kích hoạt ngay lập tức
+#     tiến trình hạ cấp độ hoặc xóa các điểm ngập đã quá hạn expires_at
+#     mà chưa có xác thực thêm.
+#     """
+#     from app.core.flood_cleanup import cleanup_expired_flood_reports
+#     return cleanup_expired_flood_reports(db)
 
 
 # ============================================================
@@ -324,7 +324,7 @@ def trigger_flood_cleanup(db: Session = Depends(get_db)):
 # ============================================================
 
 @app.get(
-    "/",
+    "/api",
     tags=["System"],
     summary="Trang chủ API",
 )

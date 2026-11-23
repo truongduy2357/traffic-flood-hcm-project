@@ -36,6 +36,14 @@ CREATE TABLE IF NOT EXISTS `flood_reports` (
     `id` INT AUTO_INCREMENT PRIMARY KEY
         COMMENT 'Mã định danh báo cáo ngập (PK, Auto Increment)',
 
+    -- Tên tuyến đường hoặc khu vực ngập
+    `title` VARCHAR(255) NULL
+        COMMENT 'Tên tuyến đường hoặc khu vực ngập',
+
+    -- Mô tả chi tiết tình trạng ngập
+    `description` TEXT NULL
+        COMMENT 'Mô tả chi tiết tình trạng ngập',
+
     -- Tọa độ GPS kiểu POINT SRID 4326 — BẮT BUỘC NOT NULL để tạo SPATIAL INDEX
     `location` POINT NOT NULL SRID 4326
         COMMENT 'Tọa độ GPS điểm ngập theo chuẩn SRID 4326 (WGS 84): POINT(lat lng)',
@@ -43,6 +51,14 @@ CREATE TABLE IF NOT EXISTS `flood_reports` (
     -- Mức độ ngập lụt theo 3 cấp (SRS mục 3.2.3)
     `severity_level` ENUM('low', 'medium', 'high') NOT NULL DEFAULT 'low'
         COMMENT 'Mức độ ngập: low (mắt cá chân ≤20cm), medium (nửa bánh xe 20-40cm), high (lút bánh xe >40cm)',
+
+    -- Độ sâu ước lượng mực nước (cm)
+    `water_depth_cm` INT NULL
+        COMMENT 'Độ sâu ước lượng của mực nước (cm)',
+
+    -- Bán kính vùng ngập ảnh hưởng (mét)
+    `radius_meters` INT NOT NULL DEFAULT 50
+        COMMENT 'Bán kính vùng ngập ảnh hưởng (mét)',
 
     -- Thời điểm tạo báo cáo
     `reported_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP

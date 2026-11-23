@@ -52,8 +52,12 @@ class FloodService:
 
         # Chèn vào database sử dụng ST_GeomFromText chuẩn SRID 4326
         db_report = FloodReport(
+            title=report_in.title,
+            description=report_in.description,
             location=point_wkt,
             severity_level=report_in.severity_level,
+            water_depth_cm=report_in.water_depth_cm,
+            radius_meters=report_in.radius_meters if report_in.radius_meters is not None else 50,
             is_verified=report_in.is_verified,
             expires_at=expires,
         )
@@ -81,6 +85,14 @@ class FloodService:
         if not report:
             return None
 
+        if update_in.title is not None:
+            report.title = update_in.title
+        if update_in.description is not None:
+            report.description = update_in.description
+        if update_in.water_depth_cm is not None:
+            report.water_depth_cm = update_in.water_depth_cm
+        if update_in.radius_meters is not None:
+            report.radius_meters = update_in.radius_meters
         if update_in.severity_level is not None:
             report.severity_level = update_in.severity_level
         if update_in.is_verified is not None:
