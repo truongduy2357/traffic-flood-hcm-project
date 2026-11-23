@@ -78,12 +78,21 @@ class Application {
     // Mở / Đóng Sidebar điều hướng
     const sidebarToggleBtn = document.getElementById("sidebarToggleBtn");
     const sidebar = document.getElementById("sidebarPanel");
+    const mainContent = document.querySelector(".main-content");
     if (sidebarToggleBtn) {
-      sidebarToggleBtn.setAttribute(
-        "aria-expanded",
-        String(sidebar?.classList.contains("active") ?? false),
-      );
+      const updateSidebarToggleState = () => {
+        const isDesktop = window.matchMedia("(min-width: 1024px)").matches;
+        const isOpen = isDesktop
+          ? Boolean(
+              mainContent && !mainContent.classList.contains("sidebar-collapsed"),
+            )
+          : Boolean(sidebar && sidebar.classList.contains("active"));
+        sidebarToggleBtn.setAttribute("aria-expanded", String(isOpen));
+      };
+
+      updateSidebarToggleState();
       sidebarToggleBtn.addEventListener("click", () => this.toggleSidebar());
+      window.addEventListener("resize", updateSidebarToggleState);
     }
 
     // Tabs: Danh sách ngập vs Tìm đường né ngập
@@ -127,13 +136,30 @@ class Application {
   toggleSidebar(open) {
     const sidebar = document.getElementById("sidebarPanel");
     if (!sidebar) return;
-    const shouldOpen =
-      open === undefined ? !sidebar.classList.contains("active") : open;
-    sidebar.classList.toggle("active", shouldOpen);
+    const isDesktop = window.matchMedia("(min-width: 1024px)").matches;
+    const mainContent = document.querySelector(".main-content");
+
+    if (isDesktop && mainContent) {
+      const shouldOpen =
+        open === undefined
+          ? mainContent.classList.contains("sidebar-collapsed")
+          : open;
+      mainContent.classList.toggle("sidebar-collapsed", !shouldOpen);
+      requestAnimationFrame(() => {
+        if (window.MapManager.map) window.MapManager.map.resize();
+      });
+    } else {
+      const shouldOpen =
+        open === undefined ? !sidebar.classList.contains("active") : open;
+      sidebar.classList.toggle("active", shouldOpen);
+    }
 
     const sidebarToggleBtn = document.getElementById("sidebarToggleBtn");
     if (sidebarToggleBtn) {
-      sidebarToggleBtn.setAttribute("aria-expanded", String(shouldOpen));
+      const isOpen = isDesktop && mainContent
+        ? !mainContent.classList.contains("sidebar-collapsed")
+        : sidebar.classList.contains("active");
+      sidebarToggleBtn.setAttribute("aria-expanded", String(isOpen));
     }
   }
 

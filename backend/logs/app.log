@@ -9,4 +9,1514 @@
 2026-11-16 18:45:25 | INFO | app.main | Database 'flood_warning_db' và Spatial Index đã sẵn sàng.
 2026-11-16 18:45:25 | INFO | app.main | Hệ thống FastAPI đã khởi động.
 2026-11-16 18:45:33 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/health | STATUS=200 | DURATION=1.13ms
-2026-11-16 18:48:13 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/health | STATUS=200 | DURATION=0.39ms
+2026-11-16 18:48:13 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/health | STATUS=200 | DURATION=0.39ms2026-11-23 08:42:28 | INFO | app.main | Đang khởi động hệ thống Hệ thống Bản đồ Cảnh báo Kẹt xe và Ngập lụt TPHCM...
+2026-11-23 08:42:28 | ERROR | app.main | Không thể khởi tạo Database 'flood_warning_db'.
+Traceback (most recent call last):
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 144, in __init__
+    self._dbapi_connection = engine.raw_connection()
+                             ~~~~~~~~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 3319, in raw_connection
+    return self.pool.connect()
+           ~~~~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 448, in connect
+    return _ConnectionFairy._checkout(self)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 1272, in _checkout
+    fairy = _ConnectionRecord.checkout(pool)
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 712, in checkout
+    rec = pool._do_get()
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\impl.py", line 178, in _do_get
+    with util.safe_reraise():
+         ~~~~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 122, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\impl.py", line 176, in _do_get
+    return self._create_connection()
+           ~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 389, in _create_connection
+    return _ConnectionRecord(self)
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 674, in __init__
+    self.__connect()
+    ~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 900, in __connect
+    with util.safe_reraise():
+         ~~~~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 122, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 896, in __connect
+    self.dbapi_connection = connection = pool._invoke_creator(self)
+                                         ~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\engine\create.py", line 667, in connect
+    return dialect.connect(*cargs_tup, **cparams)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\engine\default.py", line 630, in connect
+    return self.loaded_dbapi.connect(*cargs, **cparams)  # type: ignore[no-any-return]  # NOQA: E501
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\connections.py", line 372, in __init__
+    self.connect()
+    ~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\connections.py", line 702, in connect
+    self._request_authentication()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\connections.py", line 1022, in _request_authentication
+    auth_packet = _auth.caching_sha2_password_auth(self, auth_packet)
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\_auth.py", line 258, in caching_sha2_password_auth
+    return _roundtrip(conn, conn.password + b"\0")
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\_auth.py", line 121, in _roundtrip
+    pkt = conn._read_packet()
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\connections.py", line 803, in _read_packet
+    packet.raise_for_error()
+    ~~~~~~~~~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\protocol.py", line 219, in raise_for_error
+    err.raise_mysql_exception(self._data)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\err.py", line 154, in raise_mysql_exception
+    raise errorclass(errno, errval, sqlstate=sqlstate)
+pymysql.err.OperationalError: (1045, "Access denied for user 'root'@'localhost' (using password: YES)")
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\traffic-flood-hcm-project\backend\app\main.py", line 107, in on_startup
+    init_db()
+    ~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\backend\app\db\init_db.py", line 13, in init_db
+    Base.metadata.create_all(bind=engine)
+    ~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\sql\schema.py", line 5929, in create_all
+    bind._run_ddl_visitor(
+    ~~~~~~~~~~~~~~~~~~~~~^
+        ddl.SchemaGenerator, self, checkfirst=checkfirst, tables=tables
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 3269, in _run_ddl_visitor
+    with self.begin() as conn:
+         ~~~~~~~~~~^^
+  File "C:\Users\TRUONG ANH DUY\AppData\Local\Programs\Python\Python314\Lib\contextlib.py", line 141, in __enter__
+    return next(self.gen)
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 3259, in begin
+    with self.connect() as conn:
+         ~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 3295, in connect
+    return self._connection_cls(self)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 146, in __init__
+    Connection._handle_dbapi_exception_noconnection(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        err, dialect, engine
+        ^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 2450, in _handle_dbapi_exception_noconnection
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 144, in __init__
+    self._dbapi_connection = engine.raw_connection()
+                             ~~~~~~~~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 3319, in raw_connection
+    return self.pool.connect()
+           ~~~~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 448, in connect
+    return _ConnectionFairy._checkout(self)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 1272, in _checkout
+    fairy = _ConnectionRecord.checkout(pool)
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 712, in checkout
+    rec = pool._do_get()
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\impl.py", line 178, in _do_get
+    with util.safe_reraise():
+         ~~~~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 122, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\impl.py", line 176, in _do_get
+    return self._create_connection()
+           ~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 389, in _create_connection
+    return _ConnectionRecord(self)
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 674, in __init__
+    self.__connect()
+    ~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 900, in __connect
+    with util.safe_reraise():
+         ~~~~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 122, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 896, in __connect
+    self.dbapi_connection = connection = pool._invoke_creator(self)
+                                         ~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\engine\create.py", line 667, in connect
+    return dialect.connect(*cargs_tup, **cparams)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\engine\default.py", line 630, in connect
+    return self.loaded_dbapi.connect(*cargs, **cparams)  # type: ignore[no-any-return]  # NOQA: E501
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\connections.py", line 372, in __init__
+    self.connect()
+    ~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\connections.py", line 702, in connect
+    self._request_authentication()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\connections.py", line 1022, in _request_authentication
+    auth_packet = _auth.caching_sha2_password_auth(self, auth_packet)
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\_auth.py", line 258, in caching_sha2_password_auth
+    return _roundtrip(conn, conn.password + b"\0")
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\_auth.py", line 121, in _roundtrip
+    pkt = conn._read_packet()
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\connections.py", line 803, in _read_packet
+    packet.raise_for_error()
+    ~~~~~~~~~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\protocol.py", line 219, in raise_for_error
+    err.raise_mysql_exception(self._data)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\err.py", line 154, in raise_mysql_exception
+    raise errorclass(errno, errval, sqlstate=sqlstate)
+sqlalchemy.exc.OperationalError: (pymysql.err.OperationalError) (1045, "Access denied for user 'root'@'localhost' (using password: YES)")
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-11-23 08:42:28 | INFO | app.main | Background Task dọn dẹp điểm ngập định kỳ đã được kích hoạt.
+2026-11-23 08:42:28 | INFO | app.main | Hệ thống FastAPI đã khởi động.
+2026-11-23 08:42:28 | INFO | app.flood_cleanup | Bắt đầu Background Task tự động dọn dẹp điểm ngập (Chu kỳ: 60 giây/lần)
+2026-11-23 08:42:43 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/ | STATUS=200 | DURATION=1.05ms
+2026-11-23 08:42:47 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/docs | STATUS=200 | DURATION=0.35ms
+2026-11-23 08:42:48 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/openapi.json | STATUS=200 | DURATION=46.35ms
+2026-11-23 08:43:10 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/ | STATUS=200 | DURATION=0.65ms
+2026-11-23 08:43:10 | WARNING | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/favicon.ico | STATUS=404 | DURATION=4.15ms
+2026-11-23 08:43:28 | ERROR | app.flood_cleanup | Lỗi khi thực hiện task hạ cấp/xóa điểm ngập: (pymysql.err.OperationalError) (1045, "Access denied for user 'root'@'localhost' (using password: YES)")
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+Traceback (most recent call last):
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 144, in __init__
+    self._dbapi_connection = engine.raw_connection()
+                             ~~~~~~~~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 3319, in raw_connection
+    return self.pool.connect()
+           ~~~~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 448, in connect
+    return _ConnectionFairy._checkout(self)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 1272, in _checkout
+    fairy = _ConnectionRecord.checkout(pool)
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 712, in checkout
+    rec = pool._do_get()
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\impl.py", line 178, in _do_get
+    with util.safe_reraise():
+         ~~~~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 122, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\impl.py", line 176, in _do_get
+    return self._create_connection()
+           ~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 389, in _create_connection
+    return _ConnectionRecord(self)
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 674, in __init__
+    self.__connect()
+    ~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 900, in __connect
+    with util.safe_reraise():
+         ~~~~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 122, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 896, in __connect
+    self.dbapi_connection = connection = pool._invoke_creator(self)
+                                         ~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\engine\create.py", line 667, in connect
+    return dialect.connect(*cargs_tup, **cparams)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\engine\default.py", line 630, in connect
+    return self.loaded_dbapi.connect(*cargs, **cparams)  # type: ignore[no-any-return]  # NOQA: E501
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\connections.py", line 372, in __init__
+    self.connect()
+    ~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\connections.py", line 702, in connect
+    self._request_authentication()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\connections.py", line 1022, in _request_authentication
+    auth_packet = _auth.caching_sha2_password_auth(self, auth_packet)
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\_auth.py", line 258, in caching_sha2_password_auth
+    return _roundtrip(conn, conn.password + b"\0")
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\_auth.py", line 121, in _roundtrip
+    pkt = conn._read_packet()
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\connections.py", line 803, in _read_packet
+    packet.raise_for_error()
+    ~~~~~~~~~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\protocol.py", line 219, in raise_for_error
+    err.raise_mysql_exception(self._data)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\err.py", line 154, in raise_mysql_exception
+    raise errorclass(errno, errval, sqlstate=sqlstate)
+pymysql.err.OperationalError: (1045, "Access denied for user 'root'@'localhost' (using password: YES)")
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\traffic-flood-hcm-project\backend\app\core\flood_cleanup.py", line 45, in cleanup_expired_flood_reports
+    .all()
+     ~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\orm\query.py", line 2711, in all
+    return self._iter().all()  # type: ignore
+           ~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\orm\query.py", line 2864, in _iter
+    result: Union[ScalarResult[_T], Result[_T]] = self.session.execute(
+                                                  ~~~~~~~~~~~~~~~~~~~~^
+        statement,
+        ^^^^^^^^^^
+        params,
+        ^^^^^^^
+        execution_options={"_sa_orm_load_options": self.load_options},
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\orm\session.py", line 2373, in execute
+    return self._execute_internal(
+           ~~~~~~~~~~~~~~~~~~~~~~^
+        statement,
+        ^^^^^^^^^^
+    ...<4 lines>...
+        _add_event=_add_event,
+        ^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\orm\session.py", line 2261, in _execute_internal
+    conn = self._connection_for_bind(bind)
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\orm\session.py", line 2113, in _connection_for_bind
+    return trans._connection_for_bind(engine, execution_options)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<string>", line 2, in _connection_for_bind
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\orm\state_changes.py", line 137, in _go
+    ret_value = fn(self, *arg, **kw)
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\orm\session.py", line 1191, in _connection_for_bind
+    conn = bind.connect()
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 3295, in connect
+    return self._connection_cls(self)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 146, in __init__
+    Connection._handle_dbapi_exception_noconnection(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        err, dialect, engine
+        ^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 2450, in _handle_dbapi_exception_noconnection
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 144, in __init__
+    self._dbapi_connection = engine.raw_connection()
+                             ~~~~~~~~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 3319, in raw_connection
+    return self.pool.connect()
+           ~~~~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 448, in connect
+    return _ConnectionFairy._checkout(self)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 1272, in _checkout
+    fairy = _ConnectionRecord.checkout(pool)
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 712, in checkout
+    rec = pool._do_get()
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\impl.py", line 178, in _do_get
+    with util.safe_reraise():
+         ~~~~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 122, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\impl.py", line 176, in _do_get
+    return self._create_connection()
+           ~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 389, in _create_connection
+    return _ConnectionRecord(self)
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 674, in __init__
+    self.__connect()
+    ~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 900, in __connect
+    with util.safe_reraise():
+         ~~~~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 122, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 896, in __connect
+    self.dbapi_connection = connection = pool._invoke_creator(self)
+                                         ~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\engine\create.py", line 667, in connect
+    return dialect.connect(*cargs_tup, **cparams)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\engine\default.py", line 630, in connect
+    return self.loaded_dbapi.connect(*cargs, **cparams)  # type: ignore[no-any-return]  # NOQA: E501
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\connections.py", line 372, in __init__
+    self.connect()
+    ~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\connections.py", line 702, in connect
+    self._request_authentication()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\connections.py", line 1022, in _request_authentication
+    auth_packet = _auth.caching_sha2_password_auth(self, auth_packet)
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\_auth.py", line 258, in caching_sha2_password_auth
+    return _roundtrip(conn, conn.password + b"\0")
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\_auth.py", line 121, in _roundtrip
+    pkt = conn._read_packet()
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\connections.py", line 803, in _read_packet
+    packet.raise_for_error()
+    ~~~~~~~~~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\protocol.py", line 219, in raise_for_error
+    err.raise_mysql_exception(self._data)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\err.py", line 154, in raise_mysql_exception
+    raise errorclass(errno, errval, sqlstate=sqlstate)
+sqlalchemy.exc.OperationalError: (pymysql.err.OperationalError) (1045, "Access denied for user 'root'@'localhost' (using password: YES)")
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-11-23 08:44:28 | ERROR | app.flood_cleanup | Lỗi khi thực hiện task hạ cấp/xóa điểm ngập: (pymysql.err.OperationalError) (1045, "Access denied for user 'root'@'localhost' (using password: YES)")
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+Traceback (most recent call last):
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 144, in __init__
+    self._dbapi_connection = engine.raw_connection()
+                             ~~~~~~~~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 3319, in raw_connection
+    return self.pool.connect()
+           ~~~~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 448, in connect
+    return _ConnectionFairy._checkout(self)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 1272, in _checkout
+    fairy = _ConnectionRecord.checkout(pool)
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 712, in checkout
+    rec = pool._do_get()
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\impl.py", line 178, in _do_get
+    with util.safe_reraise():
+         ~~~~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 122, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\impl.py", line 176, in _do_get
+    return self._create_connection()
+           ~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 389, in _create_connection
+    return _ConnectionRecord(self)
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 674, in __init__
+    self.__connect()
+    ~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 900, in __connect
+    with util.safe_reraise():
+         ~~~~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 122, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 896, in __connect
+    self.dbapi_connection = connection = pool._invoke_creator(self)
+                                         ~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\engine\create.py", line 667, in connect
+    return dialect.connect(*cargs_tup, **cparams)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\engine\default.py", line 630, in connect
+    return self.loaded_dbapi.connect(*cargs, **cparams)  # type: ignore[no-any-return]  # NOQA: E501
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\connections.py", line 372, in __init__
+    self.connect()
+    ~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\connections.py", line 702, in connect
+    self._request_authentication()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\connections.py", line 1022, in _request_authentication
+    auth_packet = _auth.caching_sha2_password_auth(self, auth_packet)
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\_auth.py", line 258, in caching_sha2_password_auth
+    return _roundtrip(conn, conn.password + b"\0")
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\_auth.py", line 121, in _roundtrip
+    pkt = conn._read_packet()
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\connections.py", line 803, in _read_packet
+    packet.raise_for_error()
+    ~~~~~~~~~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\protocol.py", line 219, in raise_for_error
+    err.raise_mysql_exception(self._data)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\err.py", line 154, in raise_mysql_exception
+    raise errorclass(errno, errval, sqlstate=sqlstate)
+pymysql.err.OperationalError: (1045, "Access denied for user 'root'@'localhost' (using password: YES)")
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\traffic-flood-hcm-project\backend\app\core\flood_cleanup.py", line 45, in cleanup_expired_flood_reports
+    .all()
+     ~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\orm\query.py", line 2711, in all
+    return self._iter().all()  # type: ignore
+           ~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\orm\query.py", line 2864, in _iter
+    result: Union[ScalarResult[_T], Result[_T]] = self.session.execute(
+                                                  ~~~~~~~~~~~~~~~~~~~~^
+        statement,
+        ^^^^^^^^^^
+        params,
+        ^^^^^^^
+        execution_options={"_sa_orm_load_options": self.load_options},
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\orm\session.py", line 2373, in execute
+    return self._execute_internal(
+           ~~~~~~~~~~~~~~~~~~~~~~^
+        statement,
+        ^^^^^^^^^^
+    ...<4 lines>...
+        _add_event=_add_event,
+        ^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\orm\session.py", line 2261, in _execute_internal
+    conn = self._connection_for_bind(bind)
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\orm\session.py", line 2113, in _connection_for_bind
+    return trans._connection_for_bind(engine, execution_options)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<string>", line 2, in _connection_for_bind
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\orm\state_changes.py", line 137, in _go
+    ret_value = fn(self, *arg, **kw)
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\orm\session.py", line 1191, in _connection_for_bind
+    conn = bind.connect()
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 3295, in connect
+    return self._connection_cls(self)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 146, in __init__
+    Connection._handle_dbapi_exception_noconnection(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        err, dialect, engine
+        ^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 2450, in _handle_dbapi_exception_noconnection
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 144, in __init__
+    self._dbapi_connection = engine.raw_connection()
+                             ~~~~~~~~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 3319, in raw_connection
+    return self.pool.connect()
+           ~~~~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 448, in connect
+    return _ConnectionFairy._checkout(self)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 1272, in _checkout
+    fairy = _ConnectionRecord.checkout(pool)
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 712, in checkout
+    rec = pool._do_get()
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\impl.py", line 178, in _do_get
+    with util.safe_reraise():
+         ~~~~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 122, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\impl.py", line 176, in _do_get
+    return self._create_connection()
+           ~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 389, in _create_connection
+    return _ConnectionRecord(self)
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 674, in __init__
+    self.__connect()
+    ~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 900, in __connect
+    with util.safe_reraise():
+         ~~~~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 122, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 896, in __connect
+    self.dbapi_connection = connection = pool._invoke_creator(self)
+                                         ~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\engine\create.py", line 667, in connect
+    return dialect.connect(*cargs_tup, **cparams)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\engine\default.py", line 630, in connect
+    return self.loaded_dbapi.connect(*cargs, **cparams)  # type: ignore[no-any-return]  # NOQA: E501
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\connections.py", line 372, in __init__
+    self.connect()
+    ~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\connections.py", line 702, in connect
+    self._request_authentication()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\connections.py", line 1022, in _request_authentication
+    auth_packet = _auth.caching_sha2_password_auth(self, auth_packet)
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\_auth.py", line 258, in caching_sha2_password_auth
+    return _roundtrip(conn, conn.password + b"\0")
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\_auth.py", line 121, in _roundtrip
+    pkt = conn._read_packet()
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\connections.py", line 803, in _read_packet
+    packet.raise_for_error()
+    ~~~~~~~~~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\protocol.py", line 219, in raise_for_error
+    err.raise_mysql_exception(self._data)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\err.py", line 154, in raise_mysql_exception
+    raise errorclass(errno, errval, sqlstate=sqlstate)
+sqlalchemy.exc.OperationalError: (pymysql.err.OperationalError) (1045, "Access denied for user 'root'@'localhost' (using password: YES)")
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-11-23 08:45:28 | ERROR | app.flood_cleanup | Lỗi khi thực hiện task hạ cấp/xóa điểm ngập: (pymysql.err.OperationalError) (1045, "Access denied for user 'root'@'localhost' (using password: YES)")
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+Traceback (most recent call last):
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 144, in __init__
+    self._dbapi_connection = engine.raw_connection()
+                             ~~~~~~~~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 3319, in raw_connection
+    return self.pool.connect()
+           ~~~~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 448, in connect
+    return _ConnectionFairy._checkout(self)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 1272, in _checkout
+    fairy = _ConnectionRecord.checkout(pool)
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 712, in checkout
+    rec = pool._do_get()
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\impl.py", line 178, in _do_get
+    with util.safe_reraise():
+         ~~~~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 122, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\impl.py", line 176, in _do_get
+    return self._create_connection()
+           ~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 389, in _create_connection
+    return _ConnectionRecord(self)
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 674, in __init__
+    self.__connect()
+    ~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 900, in __connect
+    with util.safe_reraise():
+         ~~~~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 122, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 896, in __connect
+    self.dbapi_connection = connection = pool._invoke_creator(self)
+                                         ~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\engine\create.py", line 667, in connect
+    return dialect.connect(*cargs_tup, **cparams)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\engine\default.py", line 630, in connect
+    return self.loaded_dbapi.connect(*cargs, **cparams)  # type: ignore[no-any-return]  # NOQA: E501
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\connections.py", line 372, in __init__
+    self.connect()
+    ~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\connections.py", line 702, in connect
+    self._request_authentication()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\connections.py", line 1022, in _request_authentication
+    auth_packet = _auth.caching_sha2_password_auth(self, auth_packet)
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\_auth.py", line 258, in caching_sha2_password_auth
+    return _roundtrip(conn, conn.password + b"\0")
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\_auth.py", line 121, in _roundtrip
+    pkt = conn._read_packet()
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\connections.py", line 803, in _read_packet
+    packet.raise_for_error()
+    ~~~~~~~~~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\protocol.py", line 219, in raise_for_error
+    err.raise_mysql_exception(self._data)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\err.py", line 154, in raise_mysql_exception
+    raise errorclass(errno, errval, sqlstate=sqlstate)
+pymysql.err.OperationalError: (1045, "Access denied for user 'root'@'localhost' (using password: YES)")
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\traffic-flood-hcm-project\backend\app\core\flood_cleanup.py", line 45, in cleanup_expired_flood_reports
+    .all()
+     ~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\orm\query.py", line 2711, in all
+    return self._iter().all()  # type: ignore
+           ~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\orm\query.py", line 2864, in _iter
+    result: Union[ScalarResult[_T], Result[_T]] = self.session.execute(
+                                                  ~~~~~~~~~~~~~~~~~~~~^
+        statement,
+        ^^^^^^^^^^
+        params,
+        ^^^^^^^
+        execution_options={"_sa_orm_load_options": self.load_options},
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\orm\session.py", line 2373, in execute
+    return self._execute_internal(
+           ~~~~~~~~~~~~~~~~~~~~~~^
+        statement,
+        ^^^^^^^^^^
+    ...<4 lines>...
+        _add_event=_add_event,
+        ^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\orm\session.py", line 2261, in _execute_internal
+    conn = self._connection_for_bind(bind)
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\orm\session.py", line 2113, in _connection_for_bind
+    return trans._connection_for_bind(engine, execution_options)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<string>", line 2, in _connection_for_bind
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\orm\state_changes.py", line 137, in _go
+    ret_value = fn(self, *arg, **kw)
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\orm\session.py", line 1191, in _connection_for_bind
+    conn = bind.connect()
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 3295, in connect
+    return self._connection_cls(self)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 146, in __init__
+    Connection._handle_dbapi_exception_noconnection(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        err, dialect, engine
+        ^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 2450, in _handle_dbapi_exception_noconnection
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 144, in __init__
+    self._dbapi_connection = engine.raw_connection()
+                             ~~~~~~~~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 3319, in raw_connection
+    return self.pool.connect()
+           ~~~~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 448, in connect
+    return _ConnectionFairy._checkout(self)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 1272, in _checkout
+    fairy = _ConnectionRecord.checkout(pool)
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 712, in checkout
+    rec = pool._do_get()
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\impl.py", line 178, in _do_get
+    with util.safe_reraise():
+         ~~~~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 122, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\impl.py", line 176, in _do_get
+    return self._create_connection()
+           ~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 389, in _create_connection
+    return _ConnectionRecord(self)
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 674, in __init__
+    self.__connect()
+    ~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 900, in __connect
+    with util.safe_reraise():
+         ~~~~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 122, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 896, in __connect
+    self.dbapi_connection = connection = pool._invoke_creator(self)
+                                         ~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\engine\create.py", line 667, in connect
+    return dialect.connect(*cargs_tup, **cparams)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\engine\default.py", line 630, in connect
+    return self.loaded_dbapi.connect(*cargs, **cparams)  # type: ignore[no-any-return]  # NOQA: E501
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\connections.py", line 372, in __init__
+    self.connect()
+    ~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\connections.py", line 702, in connect
+    self._request_authentication()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\connections.py", line 1022, in _request_authentication
+    auth_packet = _auth.caching_sha2_password_auth(self, auth_packet)
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\_auth.py", line 258, in caching_sha2_password_auth
+    return _roundtrip(conn, conn.password + b"\0")
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\_auth.py", line 121, in _roundtrip
+    pkt = conn._read_packet()
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\connections.py", line 803, in _read_packet
+    packet.raise_for_error()
+    ~~~~~~~~~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\protocol.py", line 219, in raise_for_error
+    err.raise_mysql_exception(self._data)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\err.py", line 154, in raise_mysql_exception
+    raise errorclass(errno, errval, sqlstate=sqlstate)
+sqlalchemy.exc.OperationalError: (pymysql.err.OperationalError) (1045, "Access denied for user 'root'@'localhost' (using password: YES)")
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-11-23 08:46:28 | ERROR | app.flood_cleanup | Lỗi khi thực hiện task hạ cấp/xóa điểm ngập: (pymysql.err.OperationalError) (1045, "Access denied for user 'root'@'localhost' (using password: YES)")
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+Traceback (most recent call last):
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 144, in __init__
+    self._dbapi_connection = engine.raw_connection()
+                             ~~~~~~~~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 3319, in raw_connection
+    return self.pool.connect()
+           ~~~~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 448, in connect
+    return _ConnectionFairy._checkout(self)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 1272, in _checkout
+    fairy = _ConnectionRecord.checkout(pool)
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 712, in checkout
+    rec = pool._do_get()
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\impl.py", line 178, in _do_get
+    with util.safe_reraise():
+         ~~~~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 122, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\impl.py", line 176, in _do_get
+    return self._create_connection()
+           ~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 389, in _create_connection
+    return _ConnectionRecord(self)
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 674, in __init__
+    self.__connect()
+    ~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 900, in __connect
+    with util.safe_reraise():
+         ~~~~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 122, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 896, in __connect
+    self.dbapi_connection = connection = pool._invoke_creator(self)
+                                         ~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\engine\create.py", line 667, in connect
+    return dialect.connect(*cargs_tup, **cparams)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\engine\default.py", line 630, in connect
+    return self.loaded_dbapi.connect(*cargs, **cparams)  # type: ignore[no-any-return]  # NOQA: E501
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\connections.py", line 372, in __init__
+    self.connect()
+    ~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\connections.py", line 702, in connect
+    self._request_authentication()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\connections.py", line 1022, in _request_authentication
+    auth_packet = _auth.caching_sha2_password_auth(self, auth_packet)
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\_auth.py", line 258, in caching_sha2_password_auth
+    return _roundtrip(conn, conn.password + b"\0")
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\_auth.py", line 121, in _roundtrip
+    pkt = conn._read_packet()
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\connections.py", line 803, in _read_packet
+    packet.raise_for_error()
+    ~~~~~~~~~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\protocol.py", line 219, in raise_for_error
+    err.raise_mysql_exception(self._data)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\err.py", line 154, in raise_mysql_exception
+    raise errorclass(errno, errval, sqlstate=sqlstate)
+pymysql.err.OperationalError: (1045, "Access denied for user 'root'@'localhost' (using password: YES)")
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\traffic-flood-hcm-project\backend\app\core\flood_cleanup.py", line 45, in cleanup_expired_flood_reports
+    .all()
+     ~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\orm\query.py", line 2711, in all
+    return self._iter().all()  # type: ignore
+           ~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\orm\query.py", line 2864, in _iter
+    result: Union[ScalarResult[_T], Result[_T]] = self.session.execute(
+                                                  ~~~~~~~~~~~~~~~~~~~~^
+        statement,
+        ^^^^^^^^^^
+        params,
+        ^^^^^^^
+        execution_options={"_sa_orm_load_options": self.load_options},
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\orm\session.py", line 2373, in execute
+    return self._execute_internal(
+           ~~~~~~~~~~~~~~~~~~~~~~^
+        statement,
+        ^^^^^^^^^^
+    ...<4 lines>...
+        _add_event=_add_event,
+        ^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\orm\session.py", line 2261, in _execute_internal
+    conn = self._connection_for_bind(bind)
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\orm\session.py", line 2113, in _connection_for_bind
+    return trans._connection_for_bind(engine, execution_options)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<string>", line 2, in _connection_for_bind
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\orm\state_changes.py", line 137, in _go
+    ret_value = fn(self, *arg, **kw)
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\orm\session.py", line 1191, in _connection_for_bind
+    conn = bind.connect()
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 3295, in connect
+    return self._connection_cls(self)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 146, in __init__
+    Connection._handle_dbapi_exception_noconnection(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        err, dialect, engine
+        ^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 2450, in _handle_dbapi_exception_noconnection
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 144, in __init__
+    self._dbapi_connection = engine.raw_connection()
+                             ~~~~~~~~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 3319, in raw_connection
+    return self.pool.connect()
+           ~~~~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 448, in connect
+    return _ConnectionFairy._checkout(self)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 1272, in _checkout
+    fairy = _ConnectionRecord.checkout(pool)
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 712, in checkout
+    rec = pool._do_get()
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\impl.py", line 178, in _do_get
+    with util.safe_reraise():
+         ~~~~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 122, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\impl.py", line 176, in _do_get
+    return self._create_connection()
+           ~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 389, in _create_connection
+    return _ConnectionRecord(self)
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 674, in __init__
+    self.__connect()
+    ~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 900, in __connect
+    with util.safe_reraise():
+         ~~~~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 122, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 896, in __connect
+    self.dbapi_connection = connection = pool._invoke_creator(self)
+                                         ~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\engine\create.py", line 667, in connect
+    return dialect.connect(*cargs_tup, **cparams)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\engine\default.py", line 630, in connect
+    return self.loaded_dbapi.connect(*cargs, **cparams)  # type: ignore[no-any-return]  # NOQA: E501
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\connections.py", line 372, in __init__
+    self.connect()
+    ~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\connections.py", line 702, in connect
+    self._request_authentication()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\connections.py", line 1022, in _request_authentication
+    auth_packet = _auth.caching_sha2_password_auth(self, auth_packet)
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\_auth.py", line 258, in caching_sha2_password_auth
+    return _roundtrip(conn, conn.password + b"\0")
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\_auth.py", line 121, in _roundtrip
+    pkt = conn._read_packet()
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\connections.py", line 803, in _read_packet
+    packet.raise_for_error()
+    ~~~~~~~~~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\protocol.py", line 219, in raise_for_error
+    err.raise_mysql_exception(self._data)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\err.py", line 154, in raise_mysql_exception
+    raise errorclass(errno, errval, sqlstate=sqlstate)
+sqlalchemy.exc.OperationalError: (pymysql.err.OperationalError) (1045, "Access denied for user 'root'@'localhost' (using password: YES)")
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-11-23 08:47:28 | ERROR | app.flood_cleanup | Lỗi khi thực hiện task hạ cấp/xóa điểm ngập: (pymysql.err.OperationalError) (1045, "Access denied for user 'root'@'localhost' (using password: YES)")
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+Traceback (most recent call last):
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 144, in __init__
+    self._dbapi_connection = engine.raw_connection()
+                             ~~~~~~~~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 3319, in raw_connection
+    return self.pool.connect()
+           ~~~~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 448, in connect
+    return _ConnectionFairy._checkout(self)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 1272, in _checkout
+    fairy = _ConnectionRecord.checkout(pool)
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 712, in checkout
+    rec = pool._do_get()
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\impl.py", line 178, in _do_get
+    with util.safe_reraise():
+         ~~~~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 122, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\impl.py", line 176, in _do_get
+    return self._create_connection()
+           ~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 389, in _create_connection
+    return _ConnectionRecord(self)
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 674, in __init__
+    self.__connect()
+    ~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 900, in __connect
+    with util.safe_reraise():
+         ~~~~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 122, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 896, in __connect
+    self.dbapi_connection = connection = pool._invoke_creator(self)
+                                         ~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\engine\create.py", line 667, in connect
+    return dialect.connect(*cargs_tup, **cparams)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\engine\default.py", line 630, in connect
+    return self.loaded_dbapi.connect(*cargs, **cparams)  # type: ignore[no-any-return]  # NOQA: E501
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\connections.py", line 372, in __init__
+    self.connect()
+    ~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\connections.py", line 702, in connect
+    self._request_authentication()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\connections.py", line 1022, in _request_authentication
+    auth_packet = _auth.caching_sha2_password_auth(self, auth_packet)
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\_auth.py", line 258, in caching_sha2_password_auth
+    return _roundtrip(conn, conn.password + b"\0")
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\_auth.py", line 121, in _roundtrip
+    pkt = conn._read_packet()
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\connections.py", line 803, in _read_packet
+    packet.raise_for_error()
+    ~~~~~~~~~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\protocol.py", line 219, in raise_for_error
+    err.raise_mysql_exception(self._data)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\err.py", line 154, in raise_mysql_exception
+    raise errorclass(errno, errval, sqlstate=sqlstate)
+pymysql.err.OperationalError: (1045, "Access denied for user 'root'@'localhost' (using password: YES)")
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\traffic-flood-hcm-project\backend\app\core\flood_cleanup.py", line 45, in cleanup_expired_flood_reports
+    .all()
+     ~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\orm\query.py", line 2711, in all
+    return self._iter().all()  # type: ignore
+           ~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\orm\query.py", line 2864, in _iter
+    result: Union[ScalarResult[_T], Result[_T]] = self.session.execute(
+                                                  ~~~~~~~~~~~~~~~~~~~~^
+        statement,
+        ^^^^^^^^^^
+        params,
+        ^^^^^^^
+        execution_options={"_sa_orm_load_options": self.load_options},
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\orm\session.py", line 2373, in execute
+    return self._execute_internal(
+           ~~~~~~~~~~~~~~~~~~~~~~^
+        statement,
+        ^^^^^^^^^^
+    ...<4 lines>...
+        _add_event=_add_event,
+        ^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\orm\session.py", line 2261, in _execute_internal
+    conn = self._connection_for_bind(bind)
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\orm\session.py", line 2113, in _connection_for_bind
+    return trans._connection_for_bind(engine, execution_options)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<string>", line 2, in _connection_for_bind
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\orm\state_changes.py", line 137, in _go
+    ret_value = fn(self, *arg, **kw)
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\orm\session.py", line 1191, in _connection_for_bind
+    conn = bind.connect()
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 3295, in connect
+    return self._connection_cls(self)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 146, in __init__
+    Connection._handle_dbapi_exception_noconnection(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        err, dialect, engine
+        ^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 2450, in _handle_dbapi_exception_noconnection
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 144, in __init__
+    self._dbapi_connection = engine.raw_connection()
+                             ~~~~~~~~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 3319, in raw_connection
+    return self.pool.connect()
+           ~~~~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 448, in connect
+    return _ConnectionFairy._checkout(self)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 1272, in _checkout
+    fairy = _ConnectionRecord.checkout(pool)
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 712, in checkout
+    rec = pool._do_get()
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\impl.py", line 178, in _do_get
+    with util.safe_reraise():
+         ~~~~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 122, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\impl.py", line 176, in _do_get
+    return self._create_connection()
+           ~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 389, in _create_connection
+    return _ConnectionRecord(self)
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 674, in __init__
+    self.__connect()
+    ~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 900, in __connect
+    with util.safe_reraise():
+         ~~~~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 122, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 896, in __connect
+    self.dbapi_connection = connection = pool._invoke_creator(self)
+                                         ~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\engine\create.py", line 667, in connect
+    return dialect.connect(*cargs_tup, **cparams)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\engine\default.py", line 630, in connect
+    return self.loaded_dbapi.connect(*cargs, **cparams)  # type: ignore[no-any-return]  # NOQA: E501
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\connections.py", line 372, in __init__
+    self.connect()
+    ~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\connections.py", line 702, in connect
+    self._request_authentication()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\connections.py", line 1022, in _request_authentication
+    auth_packet = _auth.caching_sha2_password_auth(self, auth_packet)
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\_auth.py", line 258, in caching_sha2_password_auth
+    return _roundtrip(conn, conn.password + b"\0")
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\_auth.py", line 121, in _roundtrip
+    pkt = conn._read_packet()
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\connections.py", line 803, in _read_packet
+    packet.raise_for_error()
+    ~~~~~~~~~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\protocol.py", line 219, in raise_for_error
+    err.raise_mysql_exception(self._data)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\err.py", line 154, in raise_mysql_exception
+    raise errorclass(errno, errval, sqlstate=sqlstate)
+sqlalchemy.exc.OperationalError: (pymysql.err.OperationalError) (1045, "Access denied for user 'root'@'localhost' (using password: YES)")
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-11-23 08:48:28 | ERROR | app.flood_cleanup | Lỗi khi thực hiện task hạ cấp/xóa điểm ngập: (pymysql.err.OperationalError) (1045, "Access denied for user 'root'@'localhost' (using password: YES)")
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+Traceback (most recent call last):
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 144, in __init__
+    self._dbapi_connection = engine.raw_connection()
+                             ~~~~~~~~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 3319, in raw_connection
+    return self.pool.connect()
+           ~~~~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 448, in connect
+    return _ConnectionFairy._checkout(self)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 1272, in _checkout
+    fairy = _ConnectionRecord.checkout(pool)
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 712, in checkout
+    rec = pool._do_get()
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\impl.py", line 178, in _do_get
+    with util.safe_reraise():
+         ~~~~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 122, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\impl.py", line 176, in _do_get
+    return self._create_connection()
+           ~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 389, in _create_connection
+    return _ConnectionRecord(self)
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 674, in __init__
+    self.__connect()
+    ~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 900, in __connect
+    with util.safe_reraise():
+         ~~~~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 122, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 896, in __connect
+    self.dbapi_connection = connection = pool._invoke_creator(self)
+                                         ~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\engine\create.py", line 667, in connect
+    return dialect.connect(*cargs_tup, **cparams)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\engine\default.py", line 630, in connect
+    return self.loaded_dbapi.connect(*cargs, **cparams)  # type: ignore[no-any-return]  # NOQA: E501
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\connections.py", line 372, in __init__
+    self.connect()
+    ~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\connections.py", line 702, in connect
+    self._request_authentication()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\connections.py", line 1022, in _request_authentication
+    auth_packet = _auth.caching_sha2_password_auth(self, auth_packet)
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\_auth.py", line 258, in caching_sha2_password_auth
+    return _roundtrip(conn, conn.password + b"\0")
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\_auth.py", line 121, in _roundtrip
+    pkt = conn._read_packet()
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\connections.py", line 803, in _read_packet
+    packet.raise_for_error()
+    ~~~~~~~~~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\protocol.py", line 219, in raise_for_error
+    err.raise_mysql_exception(self._data)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\err.py", line 154, in raise_mysql_exception
+    raise errorclass(errno, errval, sqlstate=sqlstate)
+pymysql.err.OperationalError: (1045, "Access denied for user 'root'@'localhost' (using password: YES)")
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\traffic-flood-hcm-project\backend\app\core\flood_cleanup.py", line 45, in cleanup_expired_flood_reports
+    .all()
+     ~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\orm\query.py", line 2711, in all
+    return self._iter().all()  # type: ignore
+           ~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\orm\query.py", line 2864, in _iter
+    result: Union[ScalarResult[_T], Result[_T]] = self.session.execute(
+                                                  ~~~~~~~~~~~~~~~~~~~~^
+        statement,
+        ^^^^^^^^^^
+        params,
+        ^^^^^^^
+        execution_options={"_sa_orm_load_options": self.load_options},
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\orm\session.py", line 2373, in execute
+    return self._execute_internal(
+           ~~~~~~~~~~~~~~~~~~~~~~^
+        statement,
+        ^^^^^^^^^^
+    ...<4 lines>...
+        _add_event=_add_event,
+        ^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\orm\session.py", line 2261, in _execute_internal
+    conn = self._connection_for_bind(bind)
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\orm\session.py", line 2113, in _connection_for_bind
+    return trans._connection_for_bind(engine, execution_options)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<string>", line 2, in _connection_for_bind
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\orm\state_changes.py", line 137, in _go
+    ret_value = fn(self, *arg, **kw)
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\orm\session.py", line 1191, in _connection_for_bind
+    conn = bind.connect()
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 3295, in connect
+    return self._connection_cls(self)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 146, in __init__
+    Connection._handle_dbapi_exception_noconnection(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        err, dialect, engine
+        ^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 2450, in _handle_dbapi_exception_noconnection
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 144, in __init__
+    self._dbapi_connection = engine.raw_connection()
+                             ~~~~~~~~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 3319, in raw_connection
+    return self.pool.connect()
+           ~~~~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 448, in connect
+    return _ConnectionFairy._checkout(self)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 1272, in _checkout
+    fairy = _ConnectionRecord.checkout(pool)
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 712, in checkout
+    rec = pool._do_get()
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\impl.py", line 178, in _do_get
+    with util.safe_reraise():
+         ~~~~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 122, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\impl.py", line 176, in _do_get
+    return self._create_connection()
+           ~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 389, in _create_connection
+    return _ConnectionRecord(self)
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 674, in __init__
+    self.__connect()
+    ~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 900, in __connect
+    with util.safe_reraise():
+         ~~~~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 122, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 896, in __connect
+    self.dbapi_connection = connection = pool._invoke_creator(self)
+                                         ~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\engine\create.py", line 667, in connect
+    return dialect.connect(*cargs_tup, **cparams)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\engine\default.py", line 630, in connect
+    return self.loaded_dbapi.connect(*cargs, **cparams)  # type: ignore[no-any-return]  # NOQA: E501
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\connections.py", line 372, in __init__
+    self.connect()
+    ~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\connections.py", line 702, in connect
+    self._request_authentication()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\connections.py", line 1022, in _request_authentication
+    auth_packet = _auth.caching_sha2_password_auth(self, auth_packet)
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\_auth.py", line 258, in caching_sha2_password_auth
+    return _roundtrip(conn, conn.password + b"\0")
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\_auth.py", line 121, in _roundtrip
+    pkt = conn._read_packet()
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\connections.py", line 803, in _read_packet
+    packet.raise_for_error()
+    ~~~~~~~~~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\protocol.py", line 219, in raise_for_error
+    err.raise_mysql_exception(self._data)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\err.py", line 154, in raise_mysql_exception
+    raise errorclass(errno, errval, sqlstate=sqlstate)
+sqlalchemy.exc.OperationalError: (pymysql.err.OperationalError) (1045, "Access denied for user 'root'@'localhost' (using password: YES)")
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-11-23 08:48:48 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/docs | STATUS=200 | DURATION=0.30ms
+2026-11-23 08:48:48 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/openapi.json | STATUS=200 | DURATION=0.91ms
+2026-11-23 08:48:54 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/ | STATUS=200 | DURATION=0.43ms
+2026-11-23 08:48:57 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/ | STATUS=200 | DURATION=0.32ms
+2026-11-23 08:49:19 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/docs | STATUS=200 | DURATION=4.16ms
+2026-11-23 08:49:19 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/openapi.json | STATUS=200 | DURATION=0.52ms
+2026-11-23 08:49:23 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/health | STATUS=200 | DURATION=0.75ms
+2026-11-23 08:49:28 | ERROR | app.flood_cleanup | Lỗi khi thực hiện task hạ cấp/xóa điểm ngập: (pymysql.err.OperationalError) (1045, "Access denied for user 'root'@'localhost' (using password: YES)")
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+Traceback (most recent call last):
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 144, in __init__
+    self._dbapi_connection = engine.raw_connection()
+                             ~~~~~~~~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 3319, in raw_connection
+    return self.pool.connect()
+           ~~~~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 448, in connect
+    return _ConnectionFairy._checkout(self)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 1272, in _checkout
+    fairy = _ConnectionRecord.checkout(pool)
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 712, in checkout
+    rec = pool._do_get()
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\impl.py", line 178, in _do_get
+    with util.safe_reraise():
+         ~~~~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 122, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\impl.py", line 176, in _do_get
+    return self._create_connection()
+           ~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 389, in _create_connection
+    return _ConnectionRecord(self)
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 674, in __init__
+    self.__connect()
+    ~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 900, in __connect
+    with util.safe_reraise():
+         ~~~~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 122, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 896, in __connect
+    self.dbapi_connection = connection = pool._invoke_creator(self)
+                                         ~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\engine\create.py", line 667, in connect
+    return dialect.connect(*cargs_tup, **cparams)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\engine\default.py", line 630, in connect
+    return self.loaded_dbapi.connect(*cargs, **cparams)  # type: ignore[no-any-return]  # NOQA: E501
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\connections.py", line 372, in __init__
+    self.connect()
+    ~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\connections.py", line 702, in connect
+    self._request_authentication()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\connections.py", line 1022, in _request_authentication
+    auth_packet = _auth.caching_sha2_password_auth(self, auth_packet)
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\_auth.py", line 258, in caching_sha2_password_auth
+    return _roundtrip(conn, conn.password + b"\0")
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\_auth.py", line 121, in _roundtrip
+    pkt = conn._read_packet()
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\connections.py", line 803, in _read_packet
+    packet.raise_for_error()
+    ~~~~~~~~~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\protocol.py", line 219, in raise_for_error
+    err.raise_mysql_exception(self._data)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\err.py", line 154, in raise_mysql_exception
+    raise errorclass(errno, errval, sqlstate=sqlstate)
+pymysql.err.OperationalError: (1045, "Access denied for user 'root'@'localhost' (using password: YES)")
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\traffic-flood-hcm-project\backend\app\core\flood_cleanup.py", line 45, in cleanup_expired_flood_reports
+    .all()
+     ~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\orm\query.py", line 2711, in all
+    return self._iter().all()  # type: ignore
+           ~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\orm\query.py", line 2864, in _iter
+    result: Union[ScalarResult[_T], Result[_T]] = self.session.execute(
+                                                  ~~~~~~~~~~~~~~~~~~~~^
+        statement,
+        ^^^^^^^^^^
+        params,
+        ^^^^^^^
+        execution_options={"_sa_orm_load_options": self.load_options},
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\orm\session.py", line 2373, in execute
+    return self._execute_internal(
+           ~~~~~~~~~~~~~~~~~~~~~~^
+        statement,
+        ^^^^^^^^^^
+    ...<4 lines>...
+        _add_event=_add_event,
+        ^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\orm\session.py", line 2261, in _execute_internal
+    conn = self._connection_for_bind(bind)
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\orm\session.py", line 2113, in _connection_for_bind
+    return trans._connection_for_bind(engine, execution_options)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<string>", line 2, in _connection_for_bind
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\orm\state_changes.py", line 137, in _go
+    ret_value = fn(self, *arg, **kw)
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\orm\session.py", line 1191, in _connection_for_bind
+    conn = bind.connect()
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 3295, in connect
+    return self._connection_cls(self)
+           ~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 146, in __init__
+    Connection._handle_dbapi_exception_noconnection(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        err, dialect, engine
+        ^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 2450, in _handle_dbapi_exception_noconnection
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 144, in __init__
+    self._dbapi_connection = engine.raw_connection()
+                             ~~~~~~~~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\engine\base.py", line 3319, in raw_connection
+    return self.pool.connect()
+           ~~~~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 448, in connect
+    return _ConnectionFairy._checkout(self)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 1272, in _checkout
+    fairy = _ConnectionRecord.checkout(pool)
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 712, in checkout
+    rec = pool._do_get()
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\impl.py", line 178, in _do_get
+    with util.safe_reraise():
+         ~~~~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 122, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\impl.py", line 176, in _do_get
+    return self._create_connection()
+           ~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 389, in _create_connection
+    return _ConnectionRecord(self)
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 674, in __init__
+    self.__connect()
+    ~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 900, in __connect
+    with util.safe_reraise():
+         ~~~~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\util\langhelpers.py", line 122, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\pool\base.py", line 896, in __connect
+    self.dbapi_connection = connection = pool._invoke_creator(self)
+                                         ~~~~~~~~~~~~~~~~~~~~^^^^^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\engine\create.py", line 667, in connect
+    return dialect.connect(*cargs_tup, **cparams)
+           ~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\sqlalchemy\engine\default.py", line 630, in connect
+    return self.loaded_dbapi.connect(*cargs, **cparams)  # type: ignore[no-any-return]  # NOQA: E501
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\connections.py", line 372, in __init__
+    self.connect()
+    ~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\connections.py", line 702, in connect
+    self._request_authentication()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\connections.py", line 1022, in _request_authentication
+    auth_packet = _auth.caching_sha2_password_auth(self, auth_packet)
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\_auth.py", line 258, in caching_sha2_password_auth
+    return _roundtrip(conn, conn.password + b"\0")
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\_auth.py", line 121, in _roundtrip
+    pkt = conn._read_packet()
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\connections.py", line 803, in _read_packet
+    packet.raise_for_error()
+    ~~~~~~~~~~~~~~~~~~~~~~^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\protocol.py", line 219, in raise_for_error
+    err.raise_mysql_exception(self._data)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^
+  File "D:\traffic-flood-hcm-project\venv\Lib\site-packages\pymysql\err.py", line 154, in raise_mysql_exception
+    raise errorclass(errno, errval, sqlstate=sqlstate)
+sqlalchemy.exc.OperationalError: (pymysql.err.OperationalError) (1045, "Access denied for user 'root'@'localhost' (using password: YES)")
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-11-23 08:50:07 | INFO | app.flood_cleanup | Background Task dọn dẹp điểm ngập đã được yêu cầu dừng.
+2026-11-23 08:56:24 | INFO | app.main | Đang khởi động hệ thống Hệ thống Bản đồ Cảnh báo Kẹt xe và Ngập lụt TPHCM...
+2026-11-23 08:56:25 | INFO | app.main | Database 'flood_warning_db' và Spatial Index đã sẵn sàng.
+2026-11-23 08:56:25 | INFO | app.main | Background Task dọn dẹp điểm ngập định kỳ đã được kích hoạt.
+2026-11-23 08:56:25 | INFO | app.main | Hệ thống FastAPI đã khởi động.
+2026-11-23 08:56:25 | INFO | app.flood_cleanup | Bắt đầu Background Task tự động dọn dẹp điểm ngập (Chu kỳ: 60 giây/lần)
+2026-11-23 08:56:28 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/ | STATUS=200 | DURATION=2.50ms
+2026-11-23 08:56:28 | WARNING | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/favicon.ico | STATUS=404 | DURATION=17.76ms
+2026-11-23 08:56:33 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/docs | STATUS=200 | DURATION=0.39ms
+2026-11-23 08:56:34 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/openapi.json | STATUS=200 | DURATION=91.13ms
+2026-11-23 08:58:56 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/ | STATUS=200 | DURATION=0.44ms
+2026-11-23 08:59:41 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/index.html | STATUS=200 | DURATION=103.55ms
+2026-11-23 08:59:41 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/css/style.css | STATUS=200 | DURATION=5.39ms
+2026-11-23 08:59:41 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/js/floods.js | STATUS=200 | DURATION=4.43ms
+2026-11-23 08:59:41 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/js/config.js | STATUS=200 | DURATION=5.45ms
+2026-11-23 08:59:41 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/js/map.js | STATUS=200 | DURATION=4.98ms
+2026-11-23 08:59:41 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/js/report.js | STATUS=200 | DURATION=5.23ms
+2026-11-23 08:59:41 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/js/routing.js | STATUS=200 | DURATION=6.06ms
+2026-11-23 08:59:41 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/js/app.js | STATUS=200 | DURATION=1.37ms
+2026-11-23 08:59:42 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/api/v1/config | STATUS=200 | DURATION=0.84ms
+2026-11-23 08:59:43 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/api/v1/floods | STATUS=200 | DURATION=6.98ms
+2026-11-23 09:01:35 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/index.html | STATUS=200 | DURATION=2.36ms
+2026-11-23 09:01:35 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/css/style.css | STATUS=200 | DURATION=4.30ms
+2026-11-23 09:01:35 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/js/config.js | STATUS=200 | DURATION=6.50ms
+2026-11-23 09:01:35 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/js/floods.js | STATUS=200 | DURATION=7.24ms
+2026-11-23 09:01:35 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/js/routing.js | STATUS=200 | DURATION=10.86ms
+2026-11-23 09:01:35 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/js/report.js | STATUS=200 | DURATION=7.95ms
+2026-11-23 09:01:35 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/js/map.js | STATUS=200 | DURATION=11.03ms
+2026-11-23 09:01:35 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/js/app.js | STATUS=200 | DURATION=11.31ms
+2026-11-23 09:01:35 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/api/v1/config | STATUS=200 | DURATION=0.59ms
+2026-11-23 09:01:35 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/api/v1/floods | STATUS=200 | DURATION=5.37ms
+2026-11-23 09:01:40 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/index.html | STATUS=304 | DURATION=1.90ms
+2026-11-23 09:01:40 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/api/v1/config | STATUS=200 | DURATION=0.45ms
+2026-11-23 09:01:40 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/api/v1/floods | STATUS=200 | DURATION=3.59ms
+2026-11-23 09:01:57 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/docs | STATUS=200 | DURATION=0.39ms
+2026-11-23 09:01:57 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/openapi.json | STATUS=200 | DURATION=0.61ms
+2026-11-23 09:01:59 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/index.html | STATUS=304 | DURATION=1.52ms
+2026-11-23 09:01:59 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/api/v1/config | STATUS=200 | DURATION=0.62ms
+2026-11-23 09:02:00 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/api/v1/floods | STATUS=200 | DURATION=3.68ms
+2026-11-23 09:02:12 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/index.html | STATUS=200 | DURATION=1.97ms
+2026-11-23 09:02:12 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/css/style.css | STATUS=200 | DURATION=6.61ms
+2026-11-23 09:02:12 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/js/config.js | STATUS=200 | DURATION=11.53ms
+2026-11-23 09:02:12 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/js/report.js | STATUS=200 | DURATION=11.32ms
+2026-11-23 09:02:12 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/js/floods.js | STATUS=200 | DURATION=10.93ms
+2026-11-23 09:02:12 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/js/map.js | STATUS=200 | DURATION=12.00ms
+2026-11-23 09:02:12 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/js/routing.js | STATUS=200 | DURATION=12.58ms
+2026-11-23 09:02:12 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/js/app.js | STATUS=200 | DURATION=9.75ms
+2026-11-23 09:02:12 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/api/v1/config | STATUS=200 | DURATION=0.90ms
+2026-11-23 09:02:13 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/api/v1/floods | STATUS=200 | DURATION=5.97ms
+2026-11-23 09:02:39 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/api/v1/config | STATUS=200 | DURATION=0.81ms
+2026-11-23 09:02:39 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/api/v1/floods | STATUS=200 | DURATION=4.63ms
+2026-11-23 09:03:33 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/css/style.css | STATUS=304 | DURATION=1.52ms
+2026-11-23 09:03:33 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/js/config.js | STATUS=304 | DURATION=4.50ms
+2026-11-23 09:03:33 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/js/floods.js | STATUS=304 | DURATION=4.67ms
+2026-11-23 09:03:33 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/js/routing.js | STATUS=304 | DURATION=7.03ms
+2026-11-23 09:03:33 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/api/v1/config | STATUS=200 | DURATION=0.48ms
+2026-11-23 09:03:34 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/api/v1/floods | STATUS=200 | DURATION=3.85ms
+2026-11-23 09:03:48 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/index.html | STATUS=304 | DURATION=1.59ms
+2026-11-23 09:03:48 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/css/style.css | STATUS=304 | DURATION=2.10ms
+2026-11-23 09:03:48 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/api/v1/config | STATUS=200 | DURATION=0.50ms
+2026-11-23 09:03:49 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/api/v1/floods | STATUS=200 | DURATION=3.61ms
+2026-11-23 09:06:40 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/health | STATUS=200 | DURATION=0.67ms
+2026-11-23 09:06:40 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/api/v1/floods | STATUS=200 | DURATION=2.69ms
+2026-11-23 09:10:23 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/index.html | STATUS=200 | DURATION=1.51ms
+2026-11-23 09:10:23 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/css/style.css | STATUS=200 | DURATION=4.37ms
+2026-11-23 09:10:23 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/js/config.js | STATUS=304 | DURATION=5.46ms
+2026-11-23 09:10:23 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/js/routing.js | STATUS=304 | DURATION=4.73ms
+2026-11-23 09:10:23 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/js/floods.js | STATUS=304 | DURATION=4.81ms
+2026-11-23 09:10:23 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/js/app.js | STATUS=200 | DURATION=1.28ms
+2026-11-23 09:10:23 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/api/v1/config | STATUS=200 | DURATION=0.48ms
+2026-11-23 09:10:24 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/api/v1/floods | STATUS=200 | DURATION=3.46ms
+2026-11-23 09:11:42 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/index.html | STATUS=200 | DURATION=1.07ms
+2026-11-23 09:11:42 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/css/style.css | STATUS=200 | DURATION=5.50ms
+2026-11-23 09:11:42 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/js/app.js | STATUS=200 | DURATION=5.77ms
+2026-11-23 09:11:42 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/js/config.js | STATUS=304 | DURATION=5.50ms
+2026-11-23 09:11:42 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/js/floods.js | STATUS=304 | DURATION=5.80ms
+2026-11-23 09:11:42 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/js/routing.js | STATUS=304 | DURATION=6.62ms
+2026-11-23 09:11:42 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/api/v1/config | STATUS=200 | DURATION=0.54ms
+2026-11-23 09:11:43 | INFO | app.api_access | IP=127.0.0.1 | METHOD=GET | PATH=/api/v1/floods | STATUS=200 | DURATION=3.90ms
+2026-11-23 09:13:24 | INFO | app.flood_cleanup | Background Task dọn dẹp điểm ngập đã được yêu cầu dừng.
