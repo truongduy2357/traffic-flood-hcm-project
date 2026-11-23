@@ -1095,23 +1095,37 @@ input:checked + .slider:before {
 }
 
 @media (min-width: 1024px) {
+    /* Khung điều khiển cố định bên cạnh trên desktop (rộng rãi, luôn hiển thị) */
     .sidebar-panel {
-        width: 400px;
-        border-right: 1px solid var(--border-color);
-        box-shadow: none;
+        position: relative;
+        width: 420px;
+        min-width: 380px;
+        max-width: 450px;
+        height: 100%;
+        transform: none !important;
+        transition: none;
+        box-shadow: var(--shadow-md);
+        border-left: 1px solid var(--border-color);
+        order: 2;
+        z-index: 10;
     }
 
-    .panel-close-btn {
-        display: none;
+    /* Bản đồ mở rộng linh hoạt chiếm toàn bộ phần diện tích còn lại */
+    #map {
+        position: relative;
+        flex: 1;
+        height: 100%;
+        order: 1;
     }
 
     .main-content {
         flex-direction: row;
     }
 
-    #map {
-        position: relative;
-        flex: 1;
+    /* Ẩn nút đóng panel và nút menu toggle trên desktop vì khung điều khiển đã cố định */
+    .panel-close-btn,
+    .sidebar-toggle-btn {
+        display: none !important;
     }
 }
 

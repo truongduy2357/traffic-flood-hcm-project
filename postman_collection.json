@@ -1,0 +1,562 @@
+{
+  "info": {
+    "_postman_id": "traffic-flood-hcm-test-suite-sprint4",
+    "name": "Traffic & Flood Warning HCM - API Test Suite (Sprint 4)",
+    "description": "Bộ kiểm thử tự động toàn bộ API hệ thống Cảnh báo Kẹt xe & Ngập lụt TPHCM trên Postman / Swagger UI.\nĐảm bảo tiêu chuẩn thời gian phản hồi < 200ms theo đặc tả SRS.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://127.0.0.1:8000",
+      "type": "string"
+    },
+    {
+      "key": "test_flood_id",
+      "value": "1",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "1. System & Health Check",
+      "item": [
+        {
+          "name": "TC-01: Health Check (GET /health)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/health",
+              "host": ["{{base_url}}"],
+              "path": ["health"]
+            },
+            "description": "Kiểm tra trạng thái hoạt động của server FastAPI và kết nối CSDL."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200 OK', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Thời gian phản hồi < 200ms', function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(200);",
+                  "});",
+                  "pm.test('Kiểm tra trạng thái hệ thống', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json.status).to.be.oneOf(['healthy', 'ok', 'degraded']);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "TC-02: Public Config (GET /api/v1/config)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/config",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "config"]
+            },
+            "description": "Lấy cấu hình bản đồ OpenFreeMap và ranh giới viewport TP.HCM."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200 OK', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Thời gian phản hồi < 200ms', function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(200);",
+                  "});",
+                  "pm.test('Cung cấp đầy đủ ranh giới TPHCM', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json).to.have.property('hcm_bounds');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "TC-03: Root Info (GET /)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/",
+              "host": ["{{base_url}}"],
+              "path": [""]
+            },
+            "description": "Kiểm tra trang chủ API root."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200 OK', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Thời gian phản hồi < 200ms', function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "2. Floods (Người dùng & Báo cáo cộng đồng)",
+      "item": [
+        {
+          "name": "TC-04: Lấy danh sách điểm ngập đang hoạt động (GET /api/v1/floods)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/floods",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "floods"]
+            },
+            "description": "Truy vấn các điểm ngập còn hiệu lực (chưa hết hạn) từ MySQL để hiển thị lên bản đồ."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200 OK', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Thời gian phản hồi < 200ms (Spatial Query tối ưu)', function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(200);",
+                  "});",
+                  "pm.test('Dữ liệu trả về dạng mảng', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(Array.isArray(json)).to.be.true;",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "TC-05: Gửi báo cáo ngập hợp lệ (POST /api/v1/floods)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Đường Nguyễn Hữu Cảnh, Bình Thạnh\",\n  \"description\": \"Nước ngập nửa bánh xe đoạn gần chân cầu\",\n  \"latitude\": 10.7932,\n  \"longitude\": 106.7214,\n  \"severity_level\": \"medium\",\n  \"water_depth_cm\": 30,\n  \"radius_meters\": 50\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/floods",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "floods"]
+            },
+            "description": "Người dân gửi điểm ngập mới trong phạm vi TP.HCM."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 201 Created hoặc 200 OK', function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+                  "});",
+                  "pm.test('Thời gian phản hồi < 200ms', function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(200);",
+                  "});",
+                  "var json = pm.response.json();",
+                  "if (json.id) {",
+                  "    pm.collectionVariables.set('test_flood_id', json.id);",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "TC-06: Báo cáo ngập ngoài phạm vi TPHCM - Bị từ chối (POST /api/v1/floods)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Điểm ngập ngoài tỉnh (Hà Nội)\",\n  \"description\": \"Test tọa độ ngoài TP.HCM\",\n  \"latitude\": 21.0285,\n  \"longitude\": 105.8542,\n  \"severity_level\": \"high\",\n  \"water_depth_cm\": 50,\n  \"radius_meters\": 50\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/floods",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "floods"]
+            },
+            "description": "Kiểm tra tính hợp lệ dữ liệu (Negative Test): Tọa độ nằm ngoài TP.HCM phải trả về 422 Unprocessable Entity."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 422 Unprocessable Entity (Bảo vệ dữ liệu)', function () {",
+                  "    pm.response.to.have.status(422);",
+                  "});",
+                  "pm.test('Thời gian phản hồi < 200ms', function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "3. Routing (Né ngập & Spatial Query)",
+      "item": [
+        {
+          "name": "TC-07: Kiểm tra lộ trình né ngập qua Polyline (POST /api/v1/routes/check-flood)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"encoded_polyline\": \"_p~iF~ps|U_ulLnnqC_mqNvxq`@\",\n  \"buffer_meters\": 50\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/routes/check-flood",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "routes", "check-flood"]
+            },
+            "description": "Giải mã chuỗi Polyline LINESTRING và kiểm tra giao cắt không gian với các điểm ngập (ST_Intersects / ST_Distance_Sphere)."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200 OK', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Thời gian truy vấn không gian < 200ms (Nhờ MySQL Spatial Index R-Tree)', function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(200);",
+                  "});",
+                  "pm.test('Phản hồi có trường has_flood', function () {",
+                  "    var json = pm.response.json();",
+                  "    pm.expect(json).to.have.property('has_flood');",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "TC-08: Kiểm tra lộ trình qua danh sách tọa độ Points (POST /api/v1/routes/check-flood)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"points\": [\n    {\"latitude\": 10.7769, \"longitude\": 106.7009},\n    {\"latitude\": 10.7850, \"longitude\": 106.7100},\n    {\"latitude\": 10.7932, \"longitude\": 106.7214}\n  ],\n  \"buffer_meters\": 50\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/routes/check-flood",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "routes", "check-flood"]
+            },
+            "description": "Kiểm tra lộ trình gửi trực tiếp dưới dạng danh sách điểm [lat, lng]."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200 OK', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Thời gian phản hồi < 200ms', function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "4. Admin Management",
+      "item": [
+        {
+          "name": "TC-09: Admin - Xem tất cả điểm ngập (GET /api/v1/admin/floods)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/floods?limit=50",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "admin", "floods"],
+              "query": [
+                {
+                  "key": "limit",
+                  "value": "50"
+                }
+              ]
+            },
+            "description": "Quản trị viên xem toàn bộ danh sách điểm ngập (kể cả chưa duyệt)."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200 OK', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Thời gian phản hồi < 200ms', function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "TC-10: Admin - Thêm điểm ngập (POST /api/v1/admin/floods)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Đường Huỳnh Tấn Phát, Quận 7 (Admin)\",\n  \"description\": \"Điểm ngập được thêm bởi Quản trị viên\",\n  \"latitude\": 10.7428,\n  \"longitude\": 106.7325,\n  \"severity_level\": \"high\",\n  \"water_depth_cm\": 50,\n  \"radius_meters\": 70\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/floods",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "admin", "floods"]
+            },
+            "description": "Quản trị viên tạo điểm ngập (tự động verified = True)."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 201 Created', function () {",
+                  "    pm.response.to.have.status(201);",
+                  "});",
+                  "pm.test('Thời gian phản hồi < 200ms', function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "TC-11: Admin - Duyệt điểm ngập (PATCH /api/v1/admin/floods/{id}/verify)",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/floods/{{test_flood_id}}/verify",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "admin", "floods", "{{test_flood_id}}", "verify"]
+            },
+            "description": "Quản trị viên duyệt điểm ngập do người dân báo cáo."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200 OK hoặc 404 (nếu id không tồn tại)', function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 404]);",
+                  "});",
+                  "pm.test('Thời gian phản hồi < 200ms', function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "TC-12: Admin - Cập nhật điểm ngập (PUT /api/v1/admin/floods/{id})",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Đường Nguyễn Hữu Cảnh (Đã cập nhật)\",\n  \"water_depth_cm\": 20,\n  \"severity_level\": \"low\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/floods/{{test_flood_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "admin", "floods", "{{test_flood_id}}"]
+            },
+            "description": "Cập nhật mức ngập hoặc độ sâu của điểm ngập."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200 OK hoặc 404', function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 404]);",
+                  "});",
+                  "pm.test('Thời gian phản hồi < 200ms', function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "TC-13: Admin - Xóa điểm ngập (DELETE /api/v1/admin/floods/{id})",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/admin/floods/{{test_flood_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "admin", "floods", "{{test_flood_id}}"]
+            },
+            "description": "Xóa điểm ngập khỏi hệ thống."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200 OK hoặc 404', function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 404]);",
+                  "});",
+                  "pm.test('Thời gian phản hồi < 200ms', function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "5. Traffic & Background Cleanup",
+      "item": [
+        {
+          "name": "TC-14: Background Cleanup - Hạ cấp / Xóa ngập (POST /api/v1/floods/cleanup)",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/floods/cleanup",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "floods", "cleanup"]
+            },
+            "description": "Kích hoạt thủ công tác vụ dọn dẹp điểm ngập đã quá hạn expires_at."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200 OK', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Thời gian phản hồi < 200ms', function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "TC-15: Traffic Tile Proxy (GET /api/v1/traffic/flow/{z}/{x}/{y}.png)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/traffic/flow/12/3261/1976.png",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "traffic", "flow", "12", "3261", "1976.png"]
+            },
+            "description": "Lấy tile giao thông TomTom qua proxy backend."
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200 hoặc 503 (chưa cấu hình API Key)', function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 503]);",
+                  "});",
+                  "pm.test('Thời gian phản hồi < 200ms', function () {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(200);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
