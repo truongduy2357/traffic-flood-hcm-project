@@ -56,8 +56,9 @@ class ReportManager {
     }
 
     startPickOnMap() {
+        // Đóng modal trước (không gọi stopPickingLocation), sau đó mới bật chế độ pick
+        document.getElementById("reportModal").classList.remove("active");
         this.isPickingLocation = true;
-        this.closeModal();
         window.App.showToast("👉 Hãy CLICK vào một vị trí trên bản đồ để chọn tọa độ điểm ngập", "warning");
 
         const map = window.MapManager.map;

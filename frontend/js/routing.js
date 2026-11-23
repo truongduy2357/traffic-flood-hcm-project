@@ -505,11 +505,14 @@ class RouteManager {
       }
 
       if (avoidBtn) {
-        if (this.activeRouteIndex === 0) {
+        if (hasAlternatives && this.activeRouteIndex === 0) {
           avoidBtn.style.display = "block";
           avoidBtn.textContent = "🔄 Chuyển sang lộ trình né ngập";
         } else {
           avoidBtn.style.display = "none";
+          if (isDangerous && !hasAlternatives) {
+            window.App.showToast("Không tìm được đường né ngập thay thế. Hãy cẩn thận khi lưu thông.", "warning");
+          }
         }
       }
 
