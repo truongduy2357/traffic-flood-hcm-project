@@ -1,4 +1,3 @@
-
 from app.models.spatial import create_point_wkt, parse_point_wkt
 
 
