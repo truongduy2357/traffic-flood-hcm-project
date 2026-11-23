@@ -4,7 +4,7 @@ import urllib.error
 from fastapi import APIRouter, HTTPException, Path, status
 from fastapi.responses import Response
 
-from ..core.config import settings
+from ..core.config import is_tomtom_api_key_configured, settings
 from ..core.logger import app_logger
 
 router = APIRouter(prefix="/api/v1/traffic", tags=["Traffic"])
@@ -35,12 +35,12 @@ async def get_traffic_flow_tile(
     - Bảo vệ khóa API Key phía máy chủ, không lộ ra trình duyệt.
     - Tự động cache tile trong 60 giây để tối ưu tốc độ và giảm lưu lượng mạng.
     """
-    tomtom_key = getattr(settings, "TOMTOM_API_KEY", None)
-    if not tomtom_key:
+    if not is_tomtom_api_key_configured():
         raise HTTPException(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
             detail="Lớp giao thông chưa được cấu hình TOMTOM_API_KEY.",
         )
+    tomtom_key = settings.TOMTOM_API_KEY.strip()
 
     tile_count = 1 << z
     if x >= tile_count or y >= tile_count:
@@ -60,5 +60,5 @@ async def get_traffic_flow_tile(
         app_logger.warning(f"TomTom tile HTTP error: {exc.code}")
         raise HTTPException(status_code=exc.code, detail="Không tải được tile giao thông.")
     except Exception as exc:
-        app_logger.warning(f"TomTom tile proxy error: {exc}")
+        app_logger.warning("TomTom tile proxy error: %s", type(exc).__name__)
         raise HTTPException(status_code=status.HTTP_502_BAD_GATEWAY, detail="Không thể kết nối dịch vụ giao thông.")

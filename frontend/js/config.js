@@ -16,9 +16,8 @@ window.APP_CONFIG = {
   // Cấu hình Google Maps Platform API (Maps, Places Autocomplete, Directions)
   GOOGLE_MAPS_API_KEY: "",
 
-  // Cấu hình dữ liệu giao thông kẹt xe thời gian thực
-  TOMTOM_API_KEY: "",
-  TRAFFIC_AVAILABLE: true,
+  // Backend sẽ xác nhận lớp giao thông có được cấu hình hay không
+  TRAFFIC_AVAILABLE: false,
 
   // Đường dẫn Base URL tới Backend FastAPI
   API_BASE_URL:

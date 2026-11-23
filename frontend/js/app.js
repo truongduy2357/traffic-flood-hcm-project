@@ -25,21 +25,30 @@ class Application {
   async syncConfigFromBackend() {
     try {
       const res = await fetch(`${this.config.API_BASE_URL}/api/v1/config`);
-      if (res.ok) {
-        const data = await res.json();
-        if (data.openfreemap_style_url) {
-          this.config.DEFAULT_STYLE = data.openfreemap_style_url;
-        }
+      if (!res.ok) {
+        throw new Error(`Lấy cấu hình backend thất bại: HTTP ${res.status}`);
       }
-    } catch (e) {
-      console.warn("Dùng cấu hình mặc định:", e);
+
+      const data = await res.json();
+      if (data.openfreemap_style_url) {
+        this.config.DEFAULT_STYLE = data.openfreemap_style_url;
+      }
+      this.config.TRAFFIC_AVAILABLE = data.traffic_available === true;
+    } catch (error) {
+      this.config.TRAFFIC_AVAILABLE = false;
+      console.warn("Không thể tải cấu hình backend:", error);
     }
 
-    // Đảm bảo toggle switch kẹt xe luôn sẵn sàng hoạt động
     const trafficSwitch = document.getElementById("trafficToggleSwitch");
     const trafficStatus = document.getElementById("trafficStatus");
-    if (trafficSwitch) trafficSwitch.disabled = false;
-    if (trafficStatus) trafficStatus.textContent = "Thời gian thực";
+    if (trafficSwitch) {
+      trafficSwitch.disabled = !this.config.TRAFFIC_AVAILABLE;
+    }
+    if (trafficStatus) {
+      trafficStatus.textContent = this.config.TRAFFIC_AVAILABLE
+        ? "Sẵn sàng"
+        : "Chưa cấu hình";
+    }
   }
 
   bindEvents() {

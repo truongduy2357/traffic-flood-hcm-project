@@ -2,7 +2,7 @@
 Endpoint cung cấp cấu hình công khai và giới hạn viewport TP.HCM cho Frontend (Task 3 & Task 19).
 """
 from fastapi import APIRouter, status
-from ..core.config import settings
+from ..core.config import is_tomtom_api_key_configured, settings
 
 router = APIRouter(prefix="/api/v1/config", tags=["Configuration"])
 
@@ -21,7 +21,7 @@ router = APIRouter(prefix="/api/v1/config", tags=["Configuration"])
                         "app_name": "Hệ thống Bản đồ Cảnh báo Kẹt xe và Ngập lụt TPHCM",
                         "map_provider": "openfreemap",
                         "openfreemap_style_url": "https://tiles.openfreemap.org/styles/liberty",
-                        "traffic_available": True,
+                        "traffic_available": is_tomtom_api_key_configured(),
                         "hcm_bounds": {
                             "min_lat": 10.37,
                             "max_lat": 11.16,
@@ -51,7 +51,7 @@ def get_public_config():
         "app_version": "1.0.0",
         "map_provider": "openfreemap",
         "openfreemap_style_url": "https://tiles.openfreemap.org/styles/liberty",
-        "traffic_available": True,
+        "traffic_available": is_tomtom_api_key_configured(),
         "hcm_bounds": {
             "min_lat": settings.TPHCM_MIN_LAT,
             "max_lat": settings.TPHCM_MAX_LAT,

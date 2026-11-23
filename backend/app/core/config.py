@@ -57,6 +57,7 @@ try:
 
         # Google Maps
         GOOGLE_MAPS_API_KEY: str = "AIzaSyYourGoogleMapsApiKeyHere"
+        TOMTOM_API_KEY: str = ""
 
         # CORS
         CORS_ORIGINS: Union[List[str], str] = [
@@ -108,6 +109,7 @@ except ImportError:
         ACCESS_TOKEN_EXPIRE_MINUTES: int = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", "60"))
 
         GOOGLE_MAPS_API_KEY: str = os.getenv("GOOGLE_MAPS_API_KEY", "AIzaSyYourGoogleMapsApiKeyHere")
+        TOMTOM_API_KEY: str = os.getenv("TOMTOM_API_KEY", "")
 
         _cors = os.getenv("CORS_ORIGINS", '["http://localhost", "http://localhost:8000", "http://127.0.0.1:5500"]')
         try:
@@ -124,6 +126,11 @@ except ImportError:
         TPHCM_MAX_LNG: float = float(os.getenv("TPHCM_MAX_LNG", "106.93"))
 
 settings = Settings()
+
+
+def is_tomtom_api_key_configured() -> bool:
+    api_key = settings.TOMTOM_API_KEY.strip()
+    return bool(api_key) and api_key.lower() != "your_tomtom_api_key_here"
 
 
 def is_in_hcm(lat: float, lng: float) -> bool:

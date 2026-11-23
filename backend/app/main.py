@@ -17,7 +17,7 @@ from fastapi import FastAPI, Depends
 from sqlalchemy.orm import Session
 from sqlalchemy import or_
 
-from app.core.config import settings
+from app.core.config import is_tomtom_api_key_configured, settings
 from app.core.logger import app_logger
 from app.core.handleExp import AppException, handle_app_exception
 from app.core.logging_config import setup_logging, get_logger
@@ -174,7 +174,7 @@ async def get_system_config():
         "openfreemap_style_url": (
             "https://tiles.openfreemap.org/styles/liberty"
         ),
-        "traffic_available": False,
+        "traffic_available": is_tomtom_api_key_configured(),
 
         "hcm_bounds": {
             "min_lat": settings.TPHCM_MIN_LAT,

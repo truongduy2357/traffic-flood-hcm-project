@@ -65,8 +65,10 @@ class MapManager {
                     !this.trafficErrorNotified
                 ) {
                     this.trafficErrorNotified = true;
+                    const trafficStatus = document.getElementById("trafficStatus");
+                    if (trafficStatus) trafficStatus.textContent = "Lỗi tải dữ liệu";
                     window.App.showToast(
-                        "Không tải được dữ liệu TomTom. Kiểm tra API key và kết nối mạng.",
+                        "Không tải được dữ liệu giao thông từ backend/TomTom.",
                         "error"
                     );
                 }
@@ -89,241 +91,38 @@ class MapManager {
      * (Task 24 & FR2.1 SRS)
      */
     initTrafficLayer() {
-        // 1. Nếu tích hợp Google Maps API: khởi tạo đối tượng google.maps.TrafficLayer
-        if (window.google && window.google.maps) {
-            try {
-                this.googleTrafficLayer = new google.maps.TrafficLayer();
-                console.log("🚦 google.maps.TrafficLayer đã được khởi tạo thành công.");
-            } catch (e) {
-                console.warn("Không thể khởi tạo google.maps.TrafficLayer:", e);
-            }
+        if (!this.map) return;
+
+        const config = window.APP_CONFIG;
+        const trafficAvailable = config.TRAFFIC_AVAILABLE === true;
+        if (trafficAvailable && !this.map.getSource("traffic-flow-source")) {
+            this.map.addSource("traffic-flow-source", {
+                type: "raster",
+                tiles: [
+                    `${config.API_BASE_URL}/api/v1/traffic/flow/{z}/{x}/{y}.png`,
+                ],
+                tileSize: 256,
+                minzoom: 0,
+                maxzoom: 22,
+                attribution: "© TomTom Traffic Flow",
+            });
+
+            this.map.addLayer({
+                id: "traffic-flow-layer",
+                type: "raster",
+                source: "traffic-flow-source",
+                layout: { visibility: "none" },
+                paint: { "raster-opacity": 0.85 },
+            });
         }
 
-        // 2. Nếu chạy trên MapLibre GL / OpenFreeMap:
-        if (this.map) {
-            const config = window.APP_CONFIG;
-            const apiKey = config.TOMTOM_API_KEY || "";
-
-            // 2a. Khởi tạo lớp GeoJSON vector các tuyến đường kẹt xe huyết mạch tại TP.HCM (hiển thị tức thì)
-            if (!this.map.getSource("traffic-routes-source")) {
-                const trafficGeoJson = {
-                    type: "FeatureCollection",
-                    features: [
-                        // Đường Điện Biên Phủ - Ngã tư Hàng Xanh (Ùn tắc nặng - Đỏ)
-                        {
-                            type: "Feature",
-                            properties: { name: "Điện Biên Phủ - Hàng Xanh", status: "slow", color: "#e70704" },
-                            geometry: {
-                                type: "LineString",
-                                coordinates: [
-                                    [106.6925, 10.7876],
-                                    [106.7022, 10.7963],
-                                    [106.7112, 10.8015],
-                                    [106.7210, 10.8000],
-                                    [106.7245, 10.7985]
-                                ]
-                            }
-                        },
-                        // Đường Xô Viết Nghệ Tĩnh (Ùn tắc - Đỏ)
-                        {
-                            type: "Feature",
-                            properties: { name: "Xô Viết Nghệ Tĩnh", status: "slow", color: "#e70704" },
-                            geometry: {
-                                type: "LineString",
-                                coordinates: [
-                                    [106.7112, 10.8015],
-                                    [106.7125, 10.8105],
-                                    [106.7135, 10.8180]
-                                ]
-                            }
-                        },
-                        // Đường Cộng Hòa - Trường Chinh (Ùn tắc nặng - Đỏ)
-                        {
-                            type: "Feature",
-                            properties: { name: "Cộng Hòa - Trường Chinh", status: "slow", color: "#e70704" },
-                            geometry: {
-                                type: "LineString",
-                                coordinates: [
-                                    [106.6612, 10.7995],
-                                    [106.6534, 10.8028],
-                                    [106.6432, 10.8062],
-                                    [106.6321, 10.8123]
-                                ]
-                            }
-                        },
-                        // Đường Huỳnh Tấn Phát, Q7 (Ùn tắc triều cường - Đỏ)
-                        {
-                            type: "Feature",
-                            properties: { name: "Huỳnh Tấn Phát (Q7)", status: "slow", color: "#e70704" },
-                            geometry: {
-                                type: "LineString",
-                                coordinates: [
-                                    [106.7280, 10.7510],
-                                    [106.7354, 10.7423],
-                                    [106.7410, 10.7280]
-                                ]
-                            }
-                        },
-                        // Đường Nam Kỳ Khởi Nghĩa - Nguyễn Văn Trỗi (Di chuyển chậm - Vàng)
-                        {
-                            type: "Feature",
-                            properties: { name: "Nam Kỳ Khởi Nghĩa - Nguyễn Văn Trỗi", status: "moderate", color: "#f1a828" },
-                            geometry: {
-                                type: "LineString",
-                                coordinates: [
-                                    [106.6885, 10.7865],
-                                    [106.6782, 10.7942],
-                                    [106.6690, 10.8012],
-                                    [106.6625, 10.8078]
-                                ]
-                            }
-                        },
-                        // Đường Nguyễn Hữu Cảnh (Di chuyển chậm - Vàng)
-                        {
-                            type: "Feature",
-                            properties: { name: "Nguyễn Hữu Cảnh", status: "moderate", color: "#f1a828" },
-                            geometry: {
-                                type: "LineString",
-                                coordinates: [
-                                    [106.7065, 10.7820],
-                                    [106.7153, 10.7932],
-                                    [106.7219, 10.7951]
-                                ]
-                            }
-                        },
-                        // Đường Võ Văn Ngân, TP. Thủ Đức (Di chuyển chậm - Vàng)
-                        {
-                            type: "Feature",
-                            properties: { name: "Võ Văn Ngân (Thủ Đức)", status: "moderate", color: "#f1a828" },
-                            geometry: {
-                                type: "LineString",
-                                coordinates: [
-                                    [106.7560, 10.8460],
-                                    [106.7651, 10.8504],
-                                    [106.7720, 10.8520]
-                                ]
-                            }
-                        },
-                        // Xa Lộ Hà Nội / Võ Nguyên Giáp (Thông thoáng - Xanh)
-                        {
-                            type: "Feature",
-                            properties: { name: "Võ Nguyên Giáp - Xa Lộ Hà Nội", status: "free", color: "#2eab30" },
-                            geometry: {
-                                type: "LineString",
-                                coordinates: [
-                                    [106.7265, 10.8012],
-                                    [106.7450, 10.8190],
-                                    [106.7650, 10.8400],
-                                    [106.7725, 10.8510]
-                                ]
-                            }
-                        },
-                        // Đại lộ Võ Văn Kiệt (Thông thoáng - Xanh)
-                        {
-                            type: "Feature",
-                            properties: { name: "Đại lộ Võ Văn Kiệt", status: "free", color: "#2eab30" },
-                            geometry: {
-                                type: "LineString",
-                                coordinates: [
-                                    [106.6450, 10.7420],
-                                    [106.6700, 10.7510],
-                                    [106.6950, 10.7630],
-                                    [106.7080, 10.7680]
-                                ]
-                            }
-                        },
-                        // Đại lộ Mai Chí Thọ - Hầm Thủ Thiêm (Thông thoáng - Xanh)
-                        {
-                            type: "Feature",
-                            properties: { name: "Mai Chí Thọ - Hầm Thủ Thiêm", status: "free", color: "#2eab30" },
-                            geometry: {
-                                type: "LineString",
-                                coordinates: [
-                                    [106.7077, 10.7686],
-                                    [106.7210, 10.7760],
-                                    [106.7450, 10.7890]
-                                ]
-                            }
-                        }
-                    ]
-                };
-
-                this.map.addSource("traffic-routes-source", {
-                    type: "geojson",
-                    data: trafficGeoJson,
-                });
-
-                // Lớp đường viền phát sáng (casing)
-                this.map.addLayer({
-                    id: "traffic-routes-casing",
-                    type: "line",
-                    source: "traffic-routes-source",
-                    layout: {
-                        visibility: "none",
-                        "line-join": "round",
-                        "line-cap": "round",
-                    },
-                    paint: {
-                        "line-color": "#ffffff",
-                        "line-width": 7,
-                        "line-opacity": 0.8,
-                    },
-                });
-
-                // Lớp màu sắc biểu thị mật độ giao thông (slow: đỏ, moderate: vàng, free: xanh)
-                this.map.addLayer({
-                    id: "traffic-routes-layer",
-                    type: "line",
-                    source: "traffic-routes-source",
-                    layout: {
-                        visibility: "none",
-                        "line-join": "round",
-                        "line-cap": "round",
-                    },
-                    paint: {
-                        "line-color": ["get", "color"],
-                        "line-width": 5,
-                        "line-opacity": 0.9,
-                    },
-                });
-            }
-
-            // 2b. Lớp raster tile (nếu có cấu hình TomTom API Key)
-            if (apiKey && !this.map.getSource("traffic-flow-source")) {
-                const tileUrl = `https://api.tomtom.com/traffic/map/4/tile/flow/relative0/{z}/{x}/{y}.png?key=${apiKey}&tileSize=256`;
-                this.map.addSource("traffic-flow-source", {
-                    type: "raster",
-                    tiles: [tileUrl],
-                    tileSize: 256,
-                    minzoom: 0,
-                    maxzoom: 22,
-                    attribution: "© TomTom Traffic Flow",
-                });
-
-                this.map.addLayer({
-                    id: "traffic-flow-layer",
-                    type: "raster",
-                    source: "traffic-flow-source",
-                    layout: {
-                        visibility: "none",
-                    },
-                    paint: {
-                        "raster-opacity": 0.85,
-                    },
-                });
-            }
-
-            console.log("🚦 Traffic Layer (MapLibre/OpenFreeMap) đã sẵn sàng.");
-        }
-
-        // Kích hoạt Toggle Switch trên giao diện
         const trafficSwitch = document.getElementById("trafficToggleSwitch");
         const trafficStatus = document.getElementById("trafficStatus");
-        if (trafficSwitch) {
-            trafficSwitch.disabled = false;
-        }
+        if (trafficSwitch) trafficSwitch.disabled = !trafficAvailable;
         if (trafficStatus) {
-            trafficStatus.textContent = "Sẵn sàng";
+            trafficStatus.textContent = trafficAvailable
+                ? "Sẵn sàng"
+                : "Chưa cấu hình";
         }
     }
 
@@ -333,24 +132,23 @@ class MapManager {
      * @param {boolean} [enable] - true: hiển thị, false: ẩn, undefined: đảo trạng thái
      */
     toggleTraffic(enable) {
+        const trafficAvailable = window.APP_CONFIG.TRAFFIC_AVAILABLE === true;
+        if (enable && !trafficAvailable) {
+            const trafficSwitch = document.getElementById("trafficToggleSwitch");
+            if (trafficSwitch) trafficSwitch.checked = false;
+            window.App.showToast(
+                "Lớp giao thông chưa được cấu hình API key TomTom.",
+                "warning"
+            );
+            return false;
+        }
+
         this.isTrafficEnabled = (enable !== undefined) ? enable : !this.isTrafficEnabled;
         this.trafficErrorNotified = false;
 
-        // 1. Toggle trên Google Maps nếu có đối tượng google.maps.TrafficLayer
-        if (this.googleTrafficLayer) {
-            // Hiển thị: gán map, Ẩn: gán null
-            this.googleTrafficLayer.setMap(this.isTrafficEnabled ? this.googleMap : null);
-        }
-
-        // 2. Toggle trên MapLibre / OpenFreeMap
+        // Toggle traffic raster tiles served by the backend proxy.
         const visibility = this.isTrafficEnabled ? "visible" : "none";
         if (this.map) {
-            if (this.map.getLayer("traffic-routes-casing")) {
-                this.map.setLayoutProperty("traffic-routes-casing", "visibility", visibility);
-            }
-            if (this.map.getLayer("traffic-routes-layer")) {
-                this.map.setLayoutProperty("traffic-routes-layer", "visibility", visibility);
-            }
             if (this.map.getLayer("traffic-flow-layer")) {
                 this.map.setLayoutProperty("traffic-flow-layer", "visibility", visibility);
             }
@@ -367,12 +165,20 @@ class MapManager {
 
         // Cập nhật trạng thái checkbox switch nếu gọi bằng hàm
         const trafficSwitch = document.getElementById("trafficToggleSwitch");
+        const trafficStatus = document.getElementById("trafficStatus");
         if (trafficSwitch && trafficSwitch.checked !== this.isTrafficEnabled) {
             trafficSwitch.checked = this.isTrafficEnabled;
         }
+        if (trafficStatus) {
+            trafficStatus.textContent = this.isTrafficEnabled
+                ? "Đang hiển thị"
+                : trafficAvailable
+                    ? "Sẵn sàng"
+                    : "Chưa cấu hình";
+        }
 
         if (this.isTrafficEnabled) {
-            window.App.showToast("🚦 Đã hiển thị lớp thông tin kẹt xe thời gian thực.", "success");
+            window.App.showToast("🚦 Đã bật lớp giao thông thời gian thực.", "success");
         } else {
             window.App.showToast("Đã ẩn lớp kẹt xe.", "info");
         }
